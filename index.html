@@ -2665,6 +2665,7 @@
                             <option value="">All Sources</option>
                             <option value="posti">Posti</option>
                             <option value="wolt">Wolt</option>
+                            <option value="woltsubstitute">Wolt Substitute</option>
                             <option value="staffpoint">StaffPoint</option>
                             <option value="other">Other</option>
                         </select>
@@ -3312,6 +3313,7 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('postiDate').value = today;
             document.getElementById('woltDate').value = today;
+            document.getElementById('woltsubstituteDate').value = today;
             document.getElementById('staffDate').value = today;
             document.getElementById('otherDate').value = today;
         }
