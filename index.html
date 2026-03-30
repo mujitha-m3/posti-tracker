@@ -530,7 +530,7 @@
             background: var(--card-bg);
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
         }
 
         #weekDisplay {
@@ -778,7 +778,7 @@
             align-items: center;
             gap: var(--spacing-md);
             padding-bottom: var(--spacing-lg);
-            border-bottom: 2px solid var(--light-bg);
+            border-bottom: 2px solid var(--border-color);
             letter-spacing: -0.3px;
         }
 
@@ -831,7 +831,7 @@
         .stats-section {
             margin-top: 40px;
             padding-top: 30px;
-            border-top: 2px solid var(--light-bg);
+            border-top: 2px solid var(--border-color);
         }
 
         .stats-grid {
@@ -2989,28 +2989,28 @@
         function applyLightTheme() {
             const root = document.documentElement;
             root.style.setProperty('--primary-color', '#1e40af');
-            root.style.setProperty('--secondary-color', '#3b82f6');
-            root.style.setProperty('--accent-color', '#f59e0b');
+            root.style.setProperty('--secondary-color', '#0ea5e9');
+            root.style.setProperty('--accent-color', '#0ea5e9');
             root.style.setProperty('--success-color', '#10b981');
             root.style.setProperty('--danger-color', '#ef4444');
-            root.style.setProperty('--light-bg', '#f9fafb');
+            root.style.setProperty('--light-bg', '#f3f4f6');
             root.style.setProperty('--card-bg', '#ffffff');
             root.style.setProperty('--text-dark', '#111827');
             root.style.setProperty('--text-primary', '#111827');
             root.style.setProperty('--text-secondary', '#6b7280');
             root.style.setProperty('--text-light', '#9ca3af');
             root.style.setProperty('--border-color', '#e5e7eb');
-            root.style.setProperty('--hover-bg', '#f3f4f6');
-            root.style.setProperty('--shadow-sm', '0 1px 2px 0 rgba(0, 0, 0, 0.05)');
-            root.style.setProperty('--shadow-md', '0 4px 6px -1px rgba(0, 0, 0, 0.1)');
-            root.style.setProperty('--shadow-lg', '0 10px 25px -5px rgba(0, 0, 0, 0.1)');
+            root.style.setProperty('--hover-bg', '#f9fafb');
+            root.style.setProperty('--shadow-sm', '0 1px 3px rgba(0, 0, 0, 0.1)');
+            root.style.setProperty('--shadow-md', '0 4px 8px rgba(0, 0, 0, 0.1)');
+            root.style.setProperty('--shadow-lg', '0 8px 16px rgba(0, 0, 0, 0.12)');
             document.body.classList.add('light-theme');
             document.body.classList.remove('dark-theme');
         }
 
         // Initialize theme from localStorage on page load
         function initializeTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const savedTheme = localStorage.getItem('theme') || 'light';
             const toggle = document.getElementById('themeToggle');
             
             if (toggle) {
