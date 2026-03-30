@@ -2095,9 +2095,8 @@
         .nav-button {
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: var(--spacing-sm);
-            padding: var(--spacing-md) var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-md);
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-light);
@@ -2106,9 +2105,8 @@
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 600;
             font-size: 0.75rem;
-            text-align: center;
-            height: 44px;
-            width: 100%;
+            text-align: left;
+            min-height: 40px;
         }
 
         .nav-button:hover {
@@ -2134,7 +2132,11 @@
         }
 
         .nav-text {
-            display: none;
+            flex: 1;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .nav-dropdown-container {
