@@ -2038,7 +2038,7 @@
         }
 
         .sidebar {
-            width: 280px;
+            width: 200px;
             background: var(--card-bg);
             border-right: 1px solid var(--border-color);
             display: flex;
@@ -2050,10 +2050,10 @@
         }
 
         .sidebar-header {
-            padding: var(--spacing-lg);
+            padding: var(--spacing-md);
             border-bottom: 1px solid var(--border-color);
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
         }
 
@@ -2095,8 +2095,9 @@
         .nav-button {
             display: flex;
             align-items: center;
-            gap: var(--spacing-md);
-            padding: var(--spacing-md) var(--spacing-lg);
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-md) var(--spacing-sm);
             background: transparent;
             border: 1px solid var(--border-color);
             color: var(--text-light);
@@ -2104,8 +2105,10 @@
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 600;
-            font-size: 0.9rem;
-            text-align: left;
+            font-size: 0.75rem;
+            text-align: center;
+            height: 44px;
+            width: 100%;
         }
 
         .nav-button:hover {
@@ -2124,14 +2127,14 @@
         }
 
         .nav-icon {
-            font-size: 1.2em;
-            min-width: 24px;
+            font-size: 1.1em;
+            min-width: 18px;
             text-align: center;
+            flex-shrink: 0;
         }
 
         .nav-text {
-            flex: 1;
-            letter-spacing: -0.3px;
+            display: none;
         }
 
         .nav-dropdown-container {
@@ -2143,13 +2146,14 @@
             display: none;
             position: absolute;
             bottom: calc(100% + 4px);
-            left: var(--spacing-md);
-            right: var(--spacing-md);
+            left: calc(100% + 8px);
+            right: auto;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            z-index: 1001;
+            min-width: 180px;
         }
 
         .nav-dropdown-menu.active {
