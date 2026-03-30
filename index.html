@@ -2384,22 +2384,22 @@
             </div>
 
             <nav class="sidebar-nav">
-                <button class="nav-button active" onclick="scrollToSection('input-section')">
+                <button class="nav-button active" onclick="scrollToSection('input-section', event)">
                     <span class="nav-icon">📝</span>
                     <span class="nav-text">Log Income</span>
                 </button>
 
-                <button class="nav-button" onclick="scrollToSection('dashboard-section')">
+                <button class="nav-button" onclick="scrollToSection('dashboard-section', event)">
                     <span class="nav-icon">📊</span>
                     <span class="nav-text">Dashboard</span>
                 </button>
 
-                <button class="nav-button" onclick="scrollToSection('search-section')">
+                <button class="nav-button" onclick="scrollToSection('search-section', event)">
                     <span class="nav-icon">🔍</span>
                     <span class="nav-text">Search & Filter</span>
                 </button>
 
-                <button class="nav-button" onclick="scrollToSection('analytics-section')">
+                <button class="nav-button" onclick="scrollToSection('analytics-section', event)">
                     <span class="nav-icon">📈</span>
                     <span class="nav-text">Analytics</span>
                 </button>
@@ -3076,7 +3076,7 @@
             initializeTheme();
         }
 
-        function scrollToSection(sectionId) {
+        function scrollToSection(sectionId, evt) {
             // Hide all sections
             const allSections = document.querySelectorAll('.dashboard-tab');
             allSections.forEach(section => {
@@ -3096,14 +3096,17 @@
             });
 
             // Find and highlight the clicked button
-            const clickedButton = event?.target.closest('.nav-button');
-            if (clickedButton) {
-                clickedButton.classList.add('active');
+            if (evt) {
+                const clickedButton = evt.target.closest('.nav-button');
+                if (clickedButton) {
+                    clickedButton.classList.add('active');
+                }
             }
 
             // Close sidebar on mobile after navigation
             if (window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.remove('active');
+                const sidebar = document.getElementById('sidebar');
+                if (sidebar) sidebar.classList.remove('active');
             }
 
             // Scroll to top smoothly
