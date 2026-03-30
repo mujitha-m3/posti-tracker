@@ -3465,39 +3465,41 @@
                     }
                 });
                 
-                const chartCardDiv = document.querySelector('.chart-card');
-                if (!chartCardDiv) return;
+                // Get existing canvas
+                let ctx = document.getElementById('earningsChart');
+                if (!ctx) {
+                    console.error('earningsChart canvas not found');
+                    return;
+                }
                 
                 // Check if there's any data
                 const totalEarnings = Object.values(dayEarnings).reduce((sum, val) => sum + val, 0);
                 if (totalEarnings === 0) {
                     // Show empty state
-                    const canvasParent = document.getElementById('earningsChart')?.parentElement;
-                    if (canvasParent) {
-                        canvasParent.innerHTML = '<p style="text-align: center; color: #999; padding: 40px 20px;">No earnings data for this week. Add income entries to see the chart.</p>';
-                    }
+                    const chartContainer = ctx.parentElement;
+                    chartContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 40px 20px;">No earnings data for this week. Add income entries to see the chart.</p>';
                     return;
                 }
                 
-                // Recreate canvas if it doesn't exist
-                let ctx = document.getElementById('earningsChart');
-                if (!ctx) {
-                    const canvasParent = document.querySelector('.chart-card');
-                    canvasParent.innerHTML = '<div style="position: relative; width: 100%; height: 250px;"><canvas id="earningsChart"></canvas></div>';
-                    ctx = document.getElementById('earningsChart');
+                // Wrap canvas in container if not already wrapped
+                if (ctx.parentElement.style.position !== 'relative') {
+                    const wrapper = document.createElement('div');
+                    wrapper.style.position = 'relative';
+                    wrapper.style.width = '100%';
+                    wrapper.style.height = '250px';
+                    ctx.parentElement.insertBefore(wrapper, ctx);
+                    wrapper.appendChild(ctx);
                 }
-                
-                // Destroy existing chart if it exists
-                if (window.earningsChartInstance) {
-                    window.earningsChartInstance.destroy();
-                }
-                
-                if (!ctx) return;
                 
                 // Ensure canvas has proper dimensions
                 ctx.style.maxHeight = '250px';
                 ctx.style.width = '100%';
                 ctx.style.height = '100%';
+                
+                // Destroy existing chart if it exists
+                if (window.earningsChartInstance) {
+                    window.earningsChartInstance.destroy();
+                }
                 
                 window.earningsChartInstance = new Chart(ctx, {
                     type: 'bar',
@@ -3579,37 +3581,40 @@
                     .filter(key => sources[key] > 0)
                     .map(key => colors[key]);
                 
-                // Check if there's any data
-                if (labels.length === 0) {
-                    // Show empty state
-                    const canvasParent = document.getElementById('sourceChart')?.parentElement;
-                    if (canvasParent) {
-                        canvasParent.innerHTML = '<p style="text-align: center; color: #999; padding: 40px 20px;">No income data for this week. Add income entries to see the breakdown.</p>';
-                    }
+                // Get existing canvas
+                let ctx = document.getElementById('sourceChart');
+                if (!ctx) {
+                    console.error('sourceChart canvas not found');
                     return;
                 }
                 
-                // Recreate canvas if it doesn't exist
-                let ctx = document.getElementById('sourceChart');
-                if (!ctx) {
-                    const canvasParent = document.querySelector('.chart-card:nth-child(2)');
-                    if (canvasParent) {
-                        canvasParent.innerHTML = '<div style="position: relative; width: 100%; height: 250px;"><canvas id="sourceChart"></canvas></div>';
-                        ctx = document.getElementById('sourceChart');
-                    }
+                // Check if there's any data
+                if (labels.length === 0) {
+                    // Show empty state
+                    const chartContainer = ctx.parentElement;
+                    chartContainer.innerHTML = '<p style="text-align: center; color: #999; padding: 40px 20px;">No income data for this week. Add income entries to see the breakdown.</p>';
+                    return;
                 }
                 
-                // Destroy existing chart if it exists
-                if (window.sourceChartInstance) {
-                    window.sourceChartInstance.destroy();
+                // Wrap canvas in container if not already wrapped
+                if (ctx.parentElement.style.position !== 'relative') {
+                    const wrapper = document.createElement('div');
+                    wrapper.style.position = 'relative';
+                    wrapper.style.width = '100%';
+                    wrapper.style.height = '250px';
+                    ctx.parentElement.insertBefore(wrapper, ctx);
+                    wrapper.appendChild(ctx);
                 }
-                
-                if (!ctx) return;
                 
                 // Ensure canvas has proper dimensions
                 ctx.style.maxHeight = '250px';
                 ctx.style.width = '100%';
                 ctx.style.height = '100%';
+                
+                // Destroy existing chart if it exists
+                if (window.sourceChartInstance) {
+                    window.sourceChartInstance.destroy();
+                }
                 
                 window.sourceChartInstance = new Chart(ctx, {
                     type: 'doughnut',
