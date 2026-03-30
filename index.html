@@ -176,12 +176,12 @@
 
         section h2 {
             color: var(--text-dark);
-            margin-bottom: var(--spacing-lg);
-            font-size: 1.3em;
-            font-weight: 600;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: var(--spacing-md);
-            letter-spacing: 0;
+            margin-bottom: var(--spacing-xl);
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-bottom: none;
+            padding-bottom: 0;
+            letter-spacing: -0.5px;
         }
 
         section h3 {
@@ -409,20 +409,21 @@
         /* =========== SEARCH SECTION =========== */
         .search-section {
             background: var(--card-bg);
-            border-radius: 8px;
-            padding: var(--spacing-lg);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: var(--spacing-lg);
+            border-radius: 12px;
+            padding: var(--spacing-xl);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+            margin-bottom: var(--spacing-xl);
             border: 1px solid var(--border-color);
         }
 
         .search-section h2 {
             color: var(--text-dark);
-            margin: 0 0 var(--spacing-lg) 0;
-            font-size: 1.2rem;
-            font-weight: 600;
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--border-color);
+            margin: 0 0 var(--spacing-xl) 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+            padding-bottom: 0;
+            border-bottom: none;
+            letter-spacing: -0.5px;
         }
 
         .search-section h2::before {
@@ -454,6 +455,7 @@
             padding: var(--spacing-lg);
             margin-top: var(--spacing-xl);
             border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .search-results h3 {
@@ -461,25 +463,27 @@
             margin: 0 0 var(--spacing-lg) 0;
             font-size: 1.1rem;
             font-weight: 700;
+            letter-spacing: -0.3px;
         }
 
         .search-result-item {
             background: var(--card-bg);
             border-left: 4px solid var(--secondary-color);
-            padding: var(--spacing-md) var(--spacing-lg);
+            padding: var(--spacing-lg);
             margin-bottom: var(--spacing-md);
             border-radius: 8px;
             display: grid;
             grid-template-columns: 1fr auto auto;
             gap: var(--spacing-lg);
             align-items: center;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .search-result-item:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateX(2px);
+            box-shadow: 0 6px 16px rgba(0, 212, 255, 0.12);
+            transform: translateX(4px);
+            border-left-color: var(--primary-color);
         }
 
         .search-result-item .date-source {
@@ -600,6 +604,7 @@
             border-radius: 12px;
             margin-bottom: var(--spacing-xl);
             border: 1px solid var(--border-color);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
         }
 
         .daily-breakdown h3,
@@ -607,13 +612,14 @@
         .monthly-breakdown h3 {
             color: var(--text-dark);
             font-size: 1.2rem;
-            margin: 0 0 var(--spacing-lg) 0;
+            margin: 0 0 var(--spacing-xl) 0;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
             padding-bottom: var(--spacing-lg);
             border-bottom: 2px solid var(--light-bg);
+            letter-spacing: -0.3px;
         }
 
         .daily-breakdown h3::before {
@@ -640,12 +646,12 @@
 
         .day-card,
         .source-card {
-            background: var(--light-bg);
-            padding: var(--spacing-md);
+            background: var(--hover-bg);
+            padding: var(--spacing-lg);
             border-radius: 10px;
             border: 1px solid var(--border-color);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -660,12 +666,12 @@
             height: 3px;
             background: linear-gradient(90deg, var(--secondary-color), var(--primary-color));
             opacity: 0;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.25s ease;
         }
 
         .day-card:hover,
         .source-card:hover {
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 6px 16px rgba(0, 212, 255, 0.12);
             transform: translateY(-3px);
             border-color: var(--secondary-color);
         }
@@ -698,12 +704,12 @@
         }
 
         .source-card {
-            background: var(--card-bg);
-            padding: 16px;
+            background: var(--hover-bg);
+            padding: var(--spacing-lg);
             border-radius: 10px;
             border: 1px solid rgba(230, 126, 34, 0.15);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
@@ -717,7 +723,7 @@
             height: 3px;
             background: linear-gradient(90deg, #e67e22, #e74c3c);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.25s ease;
         }
 
         .source-card:hover {
@@ -750,23 +756,24 @@
         /* =========== TABLE STYLING =========== */
         .table-section {
             background: var(--card-bg);
-            padding: var(--spacing-lg);
-            border-radius: 8px;
-            margin-top: var(--spacing-lg);
-            box-shadow: var(--shadow-sm);
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            margin-top: var(--spacing-xl);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
         }
 
         .table-section h3 {
             color: var(--text-dark);
             font-size: 1.1rem;
-            margin: 0 0 var(--spacing-lg) 0;
-            font-weight: 600;
+            margin: 0 0 var(--spacing-xl) 0;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--spacing-lg);
+            border-bottom: 2px solid var(--light-bg);
+            letter-spacing: -0.3px;
         }
 
         .table-section h3::before {
@@ -782,17 +789,17 @@
 
         table thead {
             background: var(--hover-bg);
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 2px solid var(--border-color);
         }
 
         table th {
             padding: var(--spacing-md) var(--spacing-lg);
             text-align: left;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.8rem;
             color: var(--text-dark);
             text-transform: uppercase;
-            letter-spacing: 0;
+            letter-spacing: 0.3px;
         }
 
         table td {
@@ -803,16 +810,16 @@
         }
 
         table tbody tr {
-            transition: background 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         table tbody tr:hover {
-            background: #f5f5f5;
+            background: var(--hover-bg);
             border-left: none;
         }
 
         table tbody tr:nth-child(even) {
-            background: var(--hover-bg);
+            background: var(--light-bg);
         }
 
         .stats-section {
@@ -2113,8 +2120,8 @@
             right: var(--spacing-md);
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: var(--border-radius-sm);
-            box-shadow: var(--shadow-lg);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
             z-index: 1000;
         }
 
@@ -2133,9 +2140,10 @@
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
-            font-size: 0.95em;
-            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            transition: all 0.25s ease;
             border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
         }
 
         .dropdown-item:last-child {
@@ -2145,6 +2153,7 @@
         .dropdown-item:hover {
             background: var(--hover-bg);
             color: var(--primary-color);
+            padding-left: calc(var(--spacing-lg) + 4px);
         }
 
         .dropdown-icon {
