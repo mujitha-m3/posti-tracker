@@ -1350,14 +1350,6 @@
                 }
             }
 
-            /* =========== DEBUG BUTTON =========== */
-            [onclick="showDebugInfo()"] {
-                padding: 6px 10px;
-                font-size: 0.75em;
-                top: 5px;
-                left: 5px;
-            }
-
             /* =========== STATUS INDICATORS =========== */
             .firebase-status {
                 font-size: 0.75em;
@@ -1527,8 +1519,6 @@
 <body>
     <div class="container">
         <div class="firebase-status" id="firebaseStatus">🔄 Connecting...</div>
-        <button onclick="showDebugInfo()" style="position: absolute; top: 20px; left: 20px; padding: 8px 12px; font-size: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; zIndex: 1000;">🔧 Debug</button>
-        
         <header>
             <h1>📬 Posti Route & Gig Income Tracker</h1>
             <p>Track your daily earnings from multiple income sources</p>
@@ -3766,34 +3756,6 @@
             updateDayField(document.getElementById('staffDate').value, 'staffDay');
             updateDayField(document.getElementById('otherDate').value, 'otherDay');
         });
-
-        // ==================== DEBUG DIAGNOSTICS ====================
-        function showDebugInfo() {
-            const debugInfo = {
-                'Firebase SDK': typeof firebase,
-                'Config Valid': isFirebaseConfigured,
-                'Firebase Available': firebaseAvailable,
-                'Database Connected': database ? 'Yes' : 'No',
-                'Income Entries': income.length,
-                'Database Path': DATABASE_PATH,
-                'API Key (first 20)': firebaseConfig.apiKey.substring(0, 20) + '...',
-                'Project ID': firebaseConfig.projectId,
-                'Database URL': firebaseConfig.databaseURL
-            };
-            
-            console.log('=== FIREBASE DEBUG INFO ===');
-            Object.entries(debugInfo).forEach(([key, value]) => {
-                console.log(`${key}: ${value}`);
-            });
-            
-            // Create alert with info
-            let message = '🔧 DEBUG INFO:\n\n';
-            Object.entries(debugInfo).forEach(([key, value]) => {
-                message += `${key}: ${value}\n`;
-            });
-            
-            alert(message + '\n\nCheck browser console (F12) for detailed logs');
-        }
 
         // ==================== SERVICE WORKER REGISTRATION ====================
         if ('serviceWorker' in navigator) {
