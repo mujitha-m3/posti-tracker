@@ -27,22 +27,22 @@
         }
 
         :root {
-            --primary-color: #00d4ff;
-            --secondary-color: #00b4d8;
-            --accent-color: #00d4ff;
-            --success-color: #00d4ff;
-            --danger-color: #ff4757;
-            --light-bg: #0f1419;
-            --card-bg: #1a1f2e;
-            --text-dark: #ffffff;
-            --text-primary: #ffffff;
-            --text-secondary: #b0b9c3;
-            --text-light: #7a8592;
-            --border-color: #2d3748;
-            --hover-bg: #252d3d;
-            --shadow-sm: 0 2px 8px rgba(0, 212, 255, 0.1);
-            --shadow-md: 0 4px 12px rgba(0, 212, 255, 0.15);
-            --shadow-lg: 0 8px 24px rgba(0, 212, 255, 0.2);
+            --primary-color: #1e40af;
+            --secondary-color: #0ea5e9;
+            --accent-color: #0ea5e9;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --light-bg: #f3f4f6;
+            --card-bg: #ffffff;
+            --text-dark: #111827;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --text-light: #9ca3af;
+            --border-color: #e5e7eb;
+            --hover-bg: #f9fafb;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
             --spacing-xs: 4px;
             --spacing-sm: 8px;
             --spacing-md: 16px;
@@ -56,7 +56,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            background: #0f1419;
+            background: #f3f4f6;
             color: var(--text-dark);
             min-height: 100vh;
             margin: 0;
@@ -70,7 +70,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            background: #0f1419;
+            background: #f3f4f6;
             min-height: 100vh;
         }
 
@@ -163,7 +163,7 @@
         }
 
         main {
-            background: #0f1419;
+            background: #f3f4f6;
             border-radius: 0;
             padding: var(--spacing-xl);
             box-shadow: none;
@@ -196,7 +196,7 @@
             gap: var(--spacing-sm);
             margin-bottom: var(--spacing-xl);
             flex-wrap: wrap;
-            border-bottom: 2px solid var(--light-bg);
+            border-bottom: 2px solid var(--border-color);
             padding-bottom: var(--spacing-lg);
         }
 
@@ -335,7 +335,7 @@
         .btn-primary {
             padding: var(--spacing-md) var(--spacing-xl);
             background: var(--primary-color);
-            color: #000000;
+            color: #ffffff;
             border: none;
             border-radius: 8px;
             font-size: 0.95rem;
@@ -343,14 +343,14 @@
             cursor: pointer;
             transition: all 0.25s ease;
             grid-column: 1 / -1;
-            box-shadow: 0 4px 16px rgba(0, 212, 255, 0.25);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.2);
             letter-spacing: 0.3px;
         }
 
         .btn-primary:hover {
-            background: var(--secondary-color);
+            background: #1e3a8a;
             transform: translateY(-2px);
-            box-shadow: 0 6px 24px rgba(0, 212, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(30, 64, 175, 0.3);
         }
 
         .btn-primary:active {
@@ -984,10 +984,10 @@
         }
 
         .modal-content {
-            background: white;
+            background: #ffffff;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
             max-width: 600px;
             width: 90%;
             max-height: 90vh;
