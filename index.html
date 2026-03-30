@@ -1182,48 +1182,49 @@
                 table tr {
                     display: block;
                     background: var(--card-bg);
-                    border: 1px solid #e0e0e0;
-                    border-radius: 6px;
-                    margin-bottom: 12px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    margin-bottom: 16px;
                     overflow: hidden;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
                 }
 
                 table tr:hover {
                     background: var(--card-bg);
-                    box-shadow: var(--shadow-sm);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
                 }
 
                 table td {
                     display: grid;
-                    grid-template-columns: 85px 1fr;
-                    gap: 8px;
+                    grid-template-columns: 90px 1fr;
+                    gap: 12px;
                     align-items: center;
                     border: none;
-                    border-bottom: 1px solid #f0f0f0;
-                    padding: 10px 12px;
+                    border-bottom: 1px solid #f3f3f3;
+                    padding: 12px 14px;
                     position: relative;
-                    font-size: 0.85em;
+                    font-size: 0.9em;
                     word-break: break-word;
                 }
 
                 table td:last-child {
                     grid-template-columns: 1fr;
                     border-bottom: none;
-                    padding: 8px 12px;
+                    padding: 10px 14px 14px 14px;
                     display: flex;
                     gap: 8px;
-                    margin-top: 2px;
+                    margin-top: 4px;
                     flex-wrap: wrap;
                 }
 
-                /* Labels for each column */
+                /* Professional label styling */
                 table td::before {
                     content: attr(data-label);
-                    font-weight: 700;
-                    color: var(--text-light);
-                    font-size: 0.65em;
+                    font-weight: 600;
+                    color: #666;
+                    font-size: 0.7em;
                     text-transform: uppercase;
-                    letter-spacing: 0.5px;
+                    letter-spacing: 0.8px;
                     white-space: nowrap;
                 }
 
@@ -1233,21 +1234,48 @@
                 table tr td:nth-child(4)::before { content: "Details"; }
                 table tr td:nth-child(5)::before { content: "Duration"; }
                 table tr td:nth-child(6)::before { content: "Earnings"; }
-                table tr td:nth-child(7)::before { content: "Actions"; }
+                table tr td:nth-child(7)::before { content: ""; }
 
                 table td:last-child::before {
                     display: none;
                 }
 
+                /* Value styling - darker and more prominent */
+                table td:nth-child(1), 
+                table td:nth-child(2), 
+                table td:nth-child(3), 
+                table td:nth-child(4), 
+                table td:nth-child(5), 
+                table td:nth-child(6) {
+                    color: #222;
+                    font-weight: 500;
+                }
+
+                /* Special styling for earnings - make it stand out */
+                table td:nth-child(6) {
+                    font-weight: 700;
+                    color: #27ae60;
+                    font-size: 1.05em;
+                }
+
                 /* Buttons in action column */
                 table td:last-child button {
                     flex: 1;
-                    min-width: 70px;
-                    padding: 10px 12px;
+                    min-width: 65px;
+                    padding: 11px 14px;
                     font-size: 0.8em;
-                    min-height: 40px;
                     font-weight: 600;
-                    border-radius: 4px;
+                    min-height: 42px;
+                    border-radius: 5px;
+                    border: none;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+
+                table td:last-child button:active {
+                    transform: scale(0.98);
                 }
             }
 
