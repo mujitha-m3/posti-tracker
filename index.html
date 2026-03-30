@@ -9,12 +9,15 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232c3e50' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='%23fff' text-anchor='middle' dy='.3em'>📬</text></svg>">
     <title>Posti Route & Gig Income Tracker</title>
     
+    <!-- Preload Chart.js -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js" as="script">
+    
     <!-- Firebase SDK (Full URL with cache busting) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js?v=1"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js?v=1"></script>
 
     <!-- Chart.js for visualizations -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.js"></script>
 
     <style>
         * {
@@ -3437,7 +3440,8 @@
         // ==================== ANALYTICS & CHARTS ====================
         function displayAnalytics(weekIncome) {
             if (typeof Chart === 'undefined') {
-                console.warn('Chart.js library not loaded yet. Skipping analytics.');
+                console.warn('Chart.js library not loaded yet. Retrying in 500ms...');
+                setTimeout(() => displayAnalytics(weekIncome), 500);
                 return;
             }
             displayEarningsChart(weekIncome);
