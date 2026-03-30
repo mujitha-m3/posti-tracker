@@ -1388,6 +1388,7 @@
             .chart-card {
                 padding: 12px 10px;
                 margin-bottom: 16px;
+                overflow: hidden;
             }
 
             .chart-card h3 {
@@ -1398,15 +1399,17 @@
             }
 
             .chart-card canvas {
-                max-height: 260px !important;
+                max-height: 280px !important;
                 width: 100% !important;
+                height: auto !important;
             }
 
             .chart-card > div {
-                min-height: 240px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+                display: block;
+                width: 100%;
+                height: auto;
+                position: relative;
+                min-height: 280px;
             }
 
             /* Ensure charts container has proper aspect */
@@ -3496,20 +3499,21 @@
                     return;
                 }
                 
-                // Wrap canvas in container if not already wrapped
-                if (ctx.parentElement.style.position !== 'relative') {
-                    const wrapper = document.createElement('div');
+                // Ensure canvas parent has proper dimensions
+                const chartCard = ctx.closest('.chart-card');
+                if (chartCard) {
+                    const wrapper = chartCard.querySelector('div') || ctx.parentElement;
                     wrapper.style.position = 'relative';
                     wrapper.style.width = '100%';
-                    wrapper.style.height = '250px';
-                    ctx.parentElement.insertBefore(wrapper, ctx);
-                    wrapper.appendChild(ctx);
+                    wrapper.style.height = '280px';
                 }
                 
                 // Ensure canvas has proper dimensions
-                ctx.style.maxHeight = '250px';
+                ctx.style.maxHeight = '280px';
                 ctx.style.width = '100%';
                 ctx.style.height = '100%';
+                ctx.style.display = 'block';
+                ctx.style.margin = '0 auto';
                 
                 // Destroy existing chart if it exists
                 if (window.earningsChartInstance) {
@@ -3631,20 +3635,21 @@
                     return;
                 }
                 
-                // Wrap canvas in container if not already wrapped
-                if (ctx.parentElement.style.position !== 'relative') {
-                    const wrapper = document.createElement('div');
+                // Ensure canvas parent has proper dimensions
+                const chartCard = ctx.closest('.chart-card');
+                if (chartCard) {
+                    const wrapper = chartCard.querySelector('div') || ctx.parentElement;
                     wrapper.style.position = 'relative';
                     wrapper.style.width = '100%';
-                    wrapper.style.height = '250px';
-                    ctx.parentElement.insertBefore(wrapper, ctx);
-                    wrapper.appendChild(ctx);
+                    wrapper.style.height = '280px';
                 }
                 
                 // Ensure canvas has proper dimensions
-                ctx.style.maxHeight = '250px';
+                ctx.style.maxHeight = '280px';
                 ctx.style.width = '100%';
                 ctx.style.height = '100%';
+                ctx.style.display = 'block';
+                ctx.style.margin = '0 auto';
                 
                 // Destroy existing chart if it exists
                 if (window.sourceChartInstance) {
