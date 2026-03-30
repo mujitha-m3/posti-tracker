@@ -542,11 +542,11 @@
         .dashboard-card {
             background: var(--card-bg);
             color: var(--text-dark);
-            padding: var(--spacing-lg);
-            border-radius: 4px;
-            box-shadow: none;
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
             text-align: center;
-            transition: border 0.2s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
@@ -558,17 +558,17 @@
         }
 
         .dashboard-card:hover {
-            transform: none;
-            box-shadow: none;
-            border-color: var(--text-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
+            border-color: var(--primary-color);
         }
 
         .dashboard-card h3 {
             color: var(--text-light);
-            font-size: 0.8rem;
-            margin-bottom: var(--spacing-md);
-            font-weight: 500;
-            letter-spacing: 0;
+            font-size: 0.85rem;
+            margin-bottom: var(--spacing-lg);
+            font-weight: 600;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
@@ -583,12 +583,13 @@
         .dashboard-card:nth-child(4) h3::before { content: ''; }
 
         .big-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            letter-spacing: 0;
-            margin-top: var(--spacing-md);
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            letter-spacing: -1px;
+            margin: 0;
             font-variant-numeric: tabular-nums;
+            line-height: 1;
         }
 
         .daily-breakdown,
@@ -1031,22 +1032,22 @@
         /* Analytics Styles */
         .analytics-section {
             background: var(--card-bg);
-            padding: var(--spacing-lg);
-            border-radius: 4px;
-            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            margin: var(--spacing-xl) 0;
             border: 1px solid var(--border-color);
-            box-shadow: none;
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
         }
 
         .analytics-section h2 {
             color: var(--text-dark);
-            font-size: 1.2rem;
-            margin: 0 0 var(--spacing-lg) 0;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-md);
-            padding-bottom: var(--spacing-md);
+            font-size: 1.4rem;
+            margin: 0 0 var(--spacing-xl) 0;
+            font-weight: 700;
+            display: block;
+            padding-bottom: 0;
+            border-bottom: none;
+            letter-spacing: -0.5px;
             border-bottom: 1px solid var(--border-color);
         }
 
@@ -1064,10 +1065,10 @@
 
         .chart-card {
             background: var(--card-bg);
-            padding: var(--spacing-lg);
-            border-radius: 4px;
-            box-shadow: none;
-            transition: border 0.2s ease;
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
@@ -1078,17 +1079,18 @@
         }
 
         .chart-card:hover {
-            box-shadow: none;
-            transform: none;
-            border-color: var(--text-dark);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.15);
+            transform: translateY(-4px);
+            border-color: var(--primary-color);
         }
 
         .chart-card h3 {
             color: var(--text-dark);
-            margin-bottom: var(--spacing-lg);
-            font-size: 1rem;
-            font-weight: 600;
+            margin-bottom: var(--spacing-xl);
+            font-size: 1.1rem;
+            font-weight: 700;
             text-align: center;
+            letter-spacing: -0.3px;
         }
 
         .chart-card canvas {
@@ -1104,10 +1106,10 @@
         }
 
         .routes-analytics {
-            background: var(--light-bg);
+            background: var(--card-bg);
             padding: var(--spacing-xl);
             border-radius: 12px;
-            box-shadow: var(--shadow-sm);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
             margin-top: var(--spacing-xl);
             border: 1px solid var(--border-color);
             position: relative;
@@ -1126,14 +1128,15 @@
 
         .routes-analytics h3 {
             color: var(--text-dark);
-            margin: 0 0 var(--spacing-lg) 0;
-            font-size: 1.1rem;
+            margin: 0 0 var(--spacing-xl) 0;
+            font-size: 1.2rem;
             font-weight: 700;
             display: flex;
             align-items: center;
             gap: var(--spacing-md);
             padding-bottom: var(--spacing-lg);
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--light-bg);
+            letter-spacing: -0.3px;
         }
 
         .routes-analytics h3::before {
@@ -1147,20 +1150,22 @@
         }
 
         .route-item {
-            background: linear-gradient(135deg, #f8f9fa 0%, #f0f1f3 100%);
-            padding: 18px;
+            background: var(--hover-bg);
+            padding: var(--spacing-lg);
             border-left: 4px solid var(--secondary-color);
-            border-radius: 6px;
+            border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: all 0.3s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .route-item:hover {
-            background: var(--light-bg);
-            box-shadow: var(--shadow-sm);
+            background: var(--card-bg);
+            box-shadow: 0 6px 16px rgba(0, 212, 255, 0.1);
             transform: translateX(4px);
+            border-left-color: var(--primary-color);
         }
 
         .route-info {
@@ -2059,12 +2064,12 @@
             gap: var(--spacing-md);
             padding: var(--spacing-md) var(--spacing-lg);
             background: transparent;
-            border: 1px solid transparent;
+            border: 1px solid var(--border-color);
             color: var(--text-light);
-            border-radius: 4px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-weight: 500;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
             font-size: 0.9rem;
             text-align: left;
         }
@@ -2072,13 +2077,16 @@
         .nav-button:hover {
             background: var(--hover-bg);
             color: var(--text-dark);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0, 212, 255, 0.1);
         }
 
         .nav-button.active {
             background: var(--primary-color);
             color: #000000;
             border-color: var(--primary-color);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+            font-weight: 700;
         }
 
         .nav-icon {
