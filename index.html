@@ -4649,7 +4649,7 @@
             });
 
             const monthlyEarnings = monthlyIncome.reduce((sum, item) => sum + item.earnings, 0);
-            const monthlyHours = monthlyIncome.reduce((sum, item) => sum + item.duration, 0);
+            const monthlyHours = monthlyIncome.reduce((sum, item) => sum + (item.duration || 0), 0);
             const workedDays = new Set(monthlyIncome.map(item => item.date)).size;
             const avgHourlyRate = monthlyHours > 0 ? monthlyEarnings / monthlyHours : 0;
 
@@ -4673,7 +4673,7 @@
             monthlyIncome.forEach(item => {
                 const type = item.type;
                 stats[type].earnings += item.earnings;
-                stats[type].hours += item.duration;
+                if (item.duration) stats[type].hours += item.duration;
                 stats[type].count += 1;
                 if (item.km) stats[type].km += item.km;
                 if (type === 'woltsubstitute' && item.workerName) {
