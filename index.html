@@ -4265,12 +4265,16 @@
             const breakdown = {
                 posti: { earnings: 0, hours: 0, count: 0 },
                 wolt: { earnings: 0, count: 0 },
+                woltsubstitute: { earnings: 0, count: 0 },
                 staffpoint: { earnings: 0, hours: 0, count: 0 },
                 other: { earnings: 0, hours: 0, count: 0 }
             };
 
             weekIncome.forEach(item => {
                 const type = item.type;
+                if (!breakdown[type]) {
+                    breakdown[type] = { earnings: 0, hours: 0, count: 0 };
+                }
                 breakdown[type].earnings += item.earnings;
                 breakdown[type].count += 1;
                 if (item.duration) {
@@ -4284,6 +4288,7 @@
             const sources = [
                 { key: 'posti', emoji: '📬', name: 'Posti' },
                 { key: 'wolt', emoji: '🛵', name: 'Wolt' },
+                { key: 'woltsubstitute', emoji: '👥', name: 'Wolt Substitute' },
                 { key: 'staffpoint', emoji: '👔', name: 'StaffPoint' },
                 { key: 'other', emoji: '💼', name: 'Other' }
             ];
@@ -4864,21 +4869,25 @@
                     return;
                 }
                 
-                const sources = { posti: 0, wolt: 0, staffpoint: 0, other: 0 };
+                const sources = { posti: 0, wolt: 0, woltsubstitute: 0, staffpoint: 0, other: 0 };
                 const colors = {
                     posti: '#3498db',
                     wolt: '#e74c3c',
+                    woltsubstitute: '#9b59b6',
                     staffpoint: '#f39c12',
-                    other: '#9b59b6'
+                    other: '#95a5a6'
                 };
                 
                 weekIncome.forEach(item => {
-                    sources[item.type] += item.earnings;
+                    if (sources.hasOwnProperty(item.type)) {
+                        sources[item.type] += item.earnings;
+                    }
                 });
                 
                 const sourceNames = {
                     posti: 'Posti',
                     wolt: 'Wolt',
+                    woltsubstitute: 'Wolt Substitute',
                     staffpoint: 'StaffPoint',
                     other: 'Other'
                 };
