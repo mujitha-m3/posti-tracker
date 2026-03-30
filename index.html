@@ -2463,6 +2463,7 @@
                 <div class="income-type-selector">
                     <button type="button" class="income-tab active" data-income="posti" onclick="switchTab('posti')">📬 Posti Route</button>
                     <button type="button" class="income-tab" data-income="wolt" onclick="switchTab('wolt')">🛵 Wolt</button>
+                    <button type="button" class="income-tab" data-income="woltsubstitute" onclick="switchTab('woltsubstitute')">👥 Wolt Substitute</button>
                     <button type="button" class="income-tab" data-income="staffpoint" onclick="switchTab('staffpoint')">👔 StaffPoint</button>
                     <button type="button" class="income-tab" data-income="other" onclick="switchTab('other')">💼 Other Income</button>
                 </div>
@@ -2522,6 +2523,44 @@
                     <div style="display: flex; gap: 10px;">
                         <button type="submit" class="btn-primary" style="flex: 1;">Add Wolt Income</button>
                         <button type="button" id="cancelWoltEditBtn" class="btn-small" style="display: none; flex: 1; background: #95a5a6;">Cancel Edit</button>
+                    </div>
+                </form>
+
+                <!-- Wolt Substitute Form -->
+                <form id="woltsubstituteForm" class="income-form">
+                    <h3>Wolt Substitute Income</h3>
+                    <p class="info-text">💡 Enter total amount earned - automatically splits 25% to you, 75% to worker</p>
+                    
+                    <div class="form-group">
+                        <label for="woltsubstituteDate">Date:</label>
+                        <input type="date" id="woltsubstituteDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="woltsubstituteWorkerName">Worker Name:</label>
+                        <input type="text" id="woltsubstituteWorkerName" placeholder="e.g., John, Maria" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="woltsubstituteTotalEarnings">Total Earnings (€):</label>
+                        <input type="number" id="woltsubstituteTotalEarnings" step="0.01" placeholder="e.g., 100.00" required oninput="calculateCommission()">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="woltsubstituteUserCommission">Your Commission (25%) (€):</label>
+                            <input type="number" id="woltsubstituteUserCommission" step="0.01" placeholder="Auto-calculated" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="woltsubstituteWorkerPayment">Worker Payment (75%) (€):</label>
+                            <input type="number" id="woltsubstituteWorkerPayment" step="0.01" placeholder="Auto-calculated" readonly>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn-primary" style="flex: 1;">Add Substitute Income</button>
+                        <button type="button" id="cancelWoltSubstituteEditBtn" class="btn-small" style="display: none; flex: 1; background: #95a5a6;">Cancel Edit</button>
                     </div>
                 </form>
 
@@ -3102,6 +3141,7 @@
         let syncTimeout = null;
         let editingPostiId = null;
         let editingWoltId = null;
+        let editingWoltSubstituteId = null;
         let editingStaffPointId = null;
         let editingOtherId = null;
         let currentEditType = null;
@@ -3285,6 +3325,7 @@
             const formIds = {
                 'posti': 'postiForm',
                 'wolt': 'woltForm',
+                'woltsubstitute': 'woltsubstituteForm',
                 'staffpoint': 'staffpointForm',
                 'other': 'otherForm'
             };
@@ -3330,6 +3371,7 @@
         function setupEventListeners() {
             document.getElementById('postiForm').addEventListener('submit', handlePostiSubmit);
             document.getElementById('woltForm').addEventListener('submit', handleWoltSubmit);
+            document.getElementById('woltsubstituteForm').addEventListener('submit', handleWoltSubstituteSubmit);
             document.getElementById('staffpointForm').addEventListener('submit', handleStaffPointSubmit);
             document.getElementById('otherForm').addEventListener('submit', handleOtherSubmit);
             
@@ -3349,6 +3391,7 @@
             document.getElementById('modalKm').addEventListener('input', calculateModalPostiEarnings);
             document.getElementById('cancelEditBtn').addEventListener('click', cancelPostiEdit);
             document.getElementById('cancelWoltEditBtn').addEventListener('click', cancelWoltEdit);
+            document.getElementById('cancelWoltSubstituteEditBtn').addEventListener('click', cancelWoltSubstituteEdit);
             document.getElementById('cancelStaffPointEditBtn').addEventListener('click', cancelStaffPointEdit);
         }
 
@@ -3402,6 +3445,35 @@
             editingWoltId = null;
             document.getElementById('woltForm').reset();
             document.getElementById('cancelWoltEditBtn').style.display = 'none';
+            setDatesToToday();
+        }
+
+        function editWoltSubstituteIncome(id) {
+            const entry = income.find(item => item.id === id);
+            if (!entry) return;
+
+            // Populate form with existing data
+            document.getElementById('woltsubstituteDate').value = entry.date;
+            document.getElementById('woltsubstituteWorkerName').value = entry.workerName;
+            document.getElementById('woltsubstituteTotalEarnings').value = entry.totalEarnings.toFixed(2);
+            
+            // Trigger calculation to update commission fields
+            calculateCommission();
+
+            // Set editing mode
+            editingWoltSubstituteId = id;
+            
+            // Switch to Wolt Substitute tab
+            switchTab('woltsubstitute');
+            
+            // Show Cancel Edit button
+            document.getElementById('cancelWoltSubstituteEditBtn').style.display = 'block';
+        }
+
+        function cancelWoltSubstituteEdit() {
+            editingWoltSubstituteId = null;
+            document.getElementById('woltsubstituteForm').reset();
+            document.getElementById('cancelWoltSubstituteEditBtn').style.display = 'none';
             setDatesToToday();
         }
 
@@ -3960,6 +4032,68 @@
             updateMonthlyStats();
         }
 
+        function calculateCommission() {
+            const totalEarnings = parseFloat(document.getElementById('woltsubstituteTotalEarnings').value) || 0;
+            const userCommission = totalEarnings * 0.25;
+            const workerPayment = totalEarnings * 0.75;
+
+            document.getElementById('woltsubstituteUserCommission').value = userCommission.toFixed(2);
+            document.getElementById('woltsubstituteWorkerPayment').value = workerPayment.toFixed(2);
+        }
+
+        function handleWoltSubstituteSubmit(e) {
+            e.preventDefault();
+
+            const dateValue = document.getElementById('woltsubstituteDate').value;
+            const date = new Date(dateValue + 'T00:00:00');
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const dayName = days[date.getDay()];
+
+            const totalEarnings = parseFloat(document.getElementById('woltsubstituteTotalEarnings').value);
+            const userCommission = totalEarnings * 0.25;
+            const workerPayment = totalEarnings * 0.75;
+
+            if (editingWoltSubstituteId) {
+                // Update existing entry
+                const index = income.findIndex(item => item.id === editingWoltSubstituteId);
+                if (index !== -1) {
+                    income[index] = {
+                        ...income[index],
+                        date: dateValue,
+                        day: dayName,
+                        workerName: document.getElementById('woltsubstituteWorkerName').value,
+                        totalEarnings: totalEarnings,
+                        userCommission: userCommission,
+                        workerPayment: workerPayment
+                    };
+                }
+                showSuccessMessage('Wolt Substitute income updated successfully!');
+                editingWoltSubstituteId = null;
+            } else {
+                // Add new entry
+                const newIncome = {
+                    id: generateId(),
+                    type: 'woltsubstitute',
+                    date: dateValue,
+                    day: dayName,
+                    workerName: document.getElementById('woltsubstituteWorkerName').value,
+                    totalEarnings: totalEarnings,
+                    userCommission: userCommission,
+                    workerPayment: workerPayment,
+                    earnings: userCommission // For monthly stats calculation
+                };
+                income.push(newIncome);
+                showSuccessMessage('Wolt Substitute income added successfully!');
+            }
+
+            saveIncomeToFirebase();
+            document.getElementById('woltsubstituteForm').reset();
+            document.getElementById('cancelWoltSubstituteEditBtn').style.display = 'none';
+            setDatesToToday();
+            displayCurrentWeek();
+            updateMonthlyStats();
+        }
+
         function handleStaffPointSubmit(e) {
             e.preventDefault();
 
@@ -4356,6 +4490,8 @@
                     let details = '';
                     if (item.type === 'posti') {
                         details = item.routeCode;
+                    } else if (item.type === 'woltsubstitute') {
+                        details = `${item.workerName} • Total: €${item.totalEarnings.toFixed(2)} • Your: €${item.userCommission.toFixed(2)} • Worker: €${item.workerPayment.toFixed(2)}`;
                     } else if (item.type === 'other') {
                         details = item.source;
                     } else {
@@ -4369,6 +4505,8 @@
                         actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editPostiRoute('${item.id}')">Edit</button><button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
                     } else if (item.type === 'wolt') {
                         actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editWoltIncome('${item.id}')">Edit</button><button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
+                    } else if (item.type === 'woltsubstitute') {
+                        actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editWoltSubstituteIncome('${item.id}')">Edit</button><button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
                     } else if (item.type === 'staffpoint') {
                         actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editStaffPointIncome('${item.id}')">Edit</button><button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
                     } else if (item.type === 'other') {
@@ -4471,6 +4609,7 @@
             const emojis = {
                 posti: '📬',
                 wolt: '🛵',
+                woltsubstitute: '👥',
                 staffpoint: '👔',
                 other: '💼'
             };
@@ -4481,6 +4620,7 @@
             const types = {
                 posti: 'Posti',
                 wolt: 'Wolt',
+                woltsubstitute: 'Wolt Substitute',
                 staffpoint: 'StaffPoint',
                 other: 'Other'
             };
@@ -4523,6 +4663,7 @@
             const stats = {
                 posti: { earnings: 0, hours: 0, km: 0, count: 0 },
                 wolt: { earnings: 0, hours: 0, count: 0 },
+                woltsubstitute: { earnings: 0, hours: 0, count: 0, workers: [] },
                 staffpoint: { earnings: 0, hours: 0, count: 0 },
                 other: { earnings: 0, hours: 0, count: 0 }
             };
@@ -4533,6 +4674,10 @@
                 stats[type].hours += item.duration;
                 stats[type].count += 1;
                 if (item.km) stats[type].km += item.km;
+                if (type === 'woltsubstitute' && item.workerName) {
+                    if (!stats[type].workers) stats[type].workers = [];
+                    stats[type].workers.push(item.workerName);
+                }
             });
 
             const statsDiv = document.getElementById('sourceStats');
@@ -4541,6 +4686,7 @@
             const sources = [
                 { key: 'posti', emoji: '📬', name: 'Posti Routes' },
                 { key: 'wolt', emoji: '🛵', name: 'Wolt' },
+                { key: 'woltsubstitute', emoji: '👥', name: 'Wolt Substitute' },
                 { key: 'staffpoint', emoji: '👔', name: 'StaffPoint' },
                 { key: 'other', emoji: '💼', name: 'Other Income' }
             ];
@@ -4553,13 +4699,20 @@
                     let content = `
                         <h5>${source.emoji} ${source.name}</h5>
                         <div class="stat-line">Entries: ${data.count}</div>
-                        <div class="stat-line">Hours: ${data.hours.toFixed(2)} h</div>
                     `;
+                    if (data.hours > 0) {
+                        content += `<div class="stat-line">Hours: ${data.hours.toFixed(2)} h</div>`;
+                    }
                     if (data.km > 0) {
                         content += `<div class="stat-line">Distance: ${data.km.toFixed(0)} km</div>`;
                     }
-                    const avgHourly = data.hours > 0 ? data.earnings / data.hours : 0;
-                    content += `<div class="stat-line">Avg/hr: €${avgHourly.toFixed(2)}</div>`;
+                    if (source.key === 'woltsubstitute' && data.workers && data.workers.length > 0) {
+                        content += `<div class="stat-line">Workers: ${Array.from(new Set(data.workers)).join(', ')}</div>`;
+                    }
+                    if (data.hours > 0) {
+                        const avgHourly = data.earnings / data.hours;
+                        content += `<div class="stat-line">Avg/hr: €${avgHourly.toFixed(2)}</div>`;
+                    }
                     content += `<div class="stat-total">€${data.earnings.toFixed(2)}</div>`;
                     card.innerHTML = content;
                     statsDiv.appendChild(card);
