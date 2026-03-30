@@ -4064,7 +4064,8 @@
                         workerName: document.getElementById('woltsubstituteWorkerName').value,
                         totalEarnings: totalEarnings,
                         userCommission: userCommission,
-                        workerPayment: workerPayment
+                        workerPayment: workerPayment,
+                        earnings: userCommission // For monthly stats calculation
                     };
                 }
                 showSuccessMessage('Wolt Substitute income updated successfully!');
