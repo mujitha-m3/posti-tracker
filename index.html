@@ -9,9 +9,9 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect fill='%232c3e50' width='192' height='192'/><text x='50%' y='50%' font-size='100' font-weight='bold' fill='%23fff' text-anchor='middle' dy='.3em'>📬</text></svg>">
     <title>Posti Route & Gig Income Tracker</title>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js"></script>
+    <!-- Firebase SDK (Compat version - works without ES6 modules) -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
 
     <!-- Chart.js for visualizations -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@latest/dist/chart.min.js"></script>
@@ -366,7 +366,7 @@
 
         .breakdown-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            grid-template-columns: repeat(7, 1fr);
             gap: 16px;
             margin-top: 15px;
         }
@@ -843,6 +843,10 @@
                 padding: 15px;
             }
 
+            .breakdown-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+
             .route-item {
                 flex-direction: column;
                 align-items: flex-start;
@@ -921,13 +925,8 @@
 <body>
     <div class="container">
         <div class="firebase-status" id="firebaseStatus">🔄 Connecting...</div>
+        <button onclick="showDebugInfo()" style="position: absolute; top: 20px; left: 20px; padding: 8px 12px; font-size: 12px; background: #2c3e50; color: white; border: none; border-radius: 4px; cursor: pointer; zIndex: 1000;">🔧 Debug</button>
         
-        <!-- Data Backup Controls -->
-        <div style="position: absolute; top: 10px; right: 10px; display: flex; gap: 8px;">
-            <button onclick="exportDataAsJSON()" style="padding: 6px 12px; font-size: 12px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">💾 Backup</button>
-            <button onclick="importDataFromJSON()" style="padding: 6px 12px; font-size: 12px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">📂 Restore</button>
-        </div>
-
         <header>
             <h1>📬 Posti Route & Gig Income Tracker</h1>
             <p>Track your daily earnings from multiple income sources</p>
@@ -1131,6 +1130,12 @@
                     <div id="dailyBreakdown" class="breakdown-grid"></div>
                 </div>
 
+                <!-- Monthly Breakdown -->
+                <div class="monthly-breakdown">
+                    <h3>Monthly Breakdown</h3>
+                    <div id="monthlyBreakdown" class="breakdown-grid"></div>
+                </div>
+
                 <!-- Weekly Details Table -->
                 <div class="table-section">
                     <h3>Detailed Weekly Log</h3>
@@ -1147,6 +1152,25 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Monthly Details Table -->
+                <div class="table-section">
+                    <h3>Detailed Monthly Log</h3>
+                    <table id="monthlyTable">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Day</th>
+                                <th>Source</th>
+                                <th>Details</th>
+                                <th>Duration</th>
+                                <th>Earnings</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlyTableBody"></tbody>
                     </table>
                 </div>
             </section>
@@ -1329,40 +1353,23 @@
 
     <script>
         // ==================== FIREBASE CONFIGURATION ====================
-        // IMPORTANT: Replace these with your Firebase credentials from https://console.firebase.google.com/
+        // Firebase credentials configured for incometracker-45df7
         
         const firebaseConfig = {
-            apiKey: "AIzaSyDHxxxxxxxxxxxxxxxxxxxxxxx",  // Replace with your API Key
-            authDomain: "posti-tracker-xxxxx.firebaseapp.com",  // Replace
-            projectId: "posti-tracker-xxxxx",  // Replace
-            databaseURL: "https://posti-tracker-xxxxx.firebaseio.com",  // Replace
-            storageBucket: "posti-tracker-xxxxx.appspot.com",  // Replace
-            messagingSenderId: "xxxxxxxxxxxxx",  // Replace
-            appId: "1:xxxxxxxxxxxxx:web:xxxxxxxxxxxxxxxx"  // Replace
+            apiKey: "AIzaSyA0E7rp0IVcBCIfl4bxzizUbCY7vwPTAUA",
+            authDomain: "incometracker-45df7.firebaseapp.com",
+            projectId: "incometracker-45df7",
+            databaseURL: "https://incometracker-45df7-default-rtdb.europe-west1.firebasedatabase.app",
+            storageBucket: "incometracker-45df7.firebasestorage.app",
+            messagingSenderId: "362048743821",
+            appId: "1:362048743821:web:9cb079f5c0728c41e875c4"
         };
 
         // Check if Firebase is configured
         let isFirebaseConfigured = !firebaseConfig.apiKey.includes('xxxxx');
         let firebaseAvailable = false;
 
-        // Initialize Firebase only if configured
-        if (isFirebaseConfigured) {
-            try {
-                if (typeof firebase !== 'undefined' && firebase.initializeApp) {
-                    firebase.initializeApp(firebaseConfig);
-                    firebaseAvailable = true;
-                } else {
-                    console.warn('Firebase SDK not available');
-                    isFirebaseConfigured = false;
-                }
-            } catch (error) {
-                console.error('Error initializing Firebase:', error);
-                isFirebaseConfigured = false;
-            }
-        } else {
-            console.warn('⚠️ Firebase not configured. Please add your Firebase credentials.');
-            document.getElementById('firebaseStatus').textContent = '⚠️ Firebase Not Configured';
-        }
+        // Initialize Firebase in DOMContentLoaded (after SDK loads)
 
         // ==================== APP VARIABLES ====================
         const POSTI_HOURLY_RATE = 11;
@@ -1372,12 +1379,6 @@
         let currentWeekStart = getWeekStart(new Date());
         let income = [];
         let database = null;
-        try {
-            database = (firebaseAvailable && typeof firebase !== 'undefined') ? firebase.database() : null;
-        } catch (error) {
-            console.warn('Database initialization error:', error);
-            database = null;
-        }
         let syncTimeout = null;
         let editingPostiId = null;
         let editingWoltId = null;
@@ -1387,29 +1388,69 @@
 
         // ==================== INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', async function() {
-            // Initialize IndexedDB first
-            try {
-                await initializeIndexedDB();
-                await loadIncomeFromIndexedDB();
-            } catch (error) {
-                console.error('IndexedDB initialization failed:', error);
-                console.log('Falling back to localStorage...');
-                loadIncomeFromLocalStorage();
+            console.log('🔥 DOMContentLoaded - Starting initialization...');
+            console.log('Firebase SDK loaded:', typeof firebase !== 'undefined');
+            console.log('Config valid:', isFirebaseConfigured);
+            
+            // Initialize Firebase (wait for SDK to fully load)
+            if (isFirebaseConfigured) {
+                // Wait for Firebase SDK to load
+                let retries = 0;
+                const maxRetries = 10; // Try for up to 5 seconds
+                
+                while (typeof firebase === 'undefined' && retries < maxRetries) {
+                    console.log(`⏳ Waiting for Firebase SDK... (attempt ${retries + 1}/${maxRetries})`);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                    retries++;
+                }
+                
+                if (typeof firebase === 'undefined') {
+                    console.error('❌ Firebase SDK failed to load from CDN after waiting');
+                    updateFirebaseStatus('offline');
+                } else {
+                    try {
+                        console.log('✅ Firebase SDK loaded, initializing...');
+                        
+                        // Check if already initialized
+                        if (firebase.apps && firebase.apps.length > 0) {
+                            firebaseAvailable = true;
+                            database = firebase.database();
+                            console.log('✅ Firebase already initialized');
+                            updateFirebaseStatus('connected');
+                        } else {
+                            firebase.initializeApp(firebaseConfig);
+                            firebaseAvailable = true;
+                            database = firebase.database();
+                            console.log('✅ Firebase initialized successfully');
+                            updateFirebaseStatus('connected');
+                        }
+                    } catch (error) {
+                        console.error('❌ Error initializing Firebase:', error);
+                        firebaseAvailable = false;
+                        database = null;
+                        updateFirebaseStatus('offline');
+                    }
+                }
+            } else {
+                console.warn('⚠️ Firebase config invalid or not set.');
+                updateFirebaseStatus('offline');
             }
             
-            // Setup Firebase if configured (optional)
-            if (isFirebaseConfigured && database) {
-                updateFirebaseStatus('connected');
-                // Optionally sync with Firebase
+            console.log('🔍 Firebase Available:', firebaseAvailable);
+            console.log('🔍 Database:', database ? 'connected' : 'null');
+            
+            // Load data from Firebase on startup
+            if (firebaseAvailable && database) {
+                console.log('📥 Loading data from Firebase...');
+                loadIncomeFromFirebase();
             } else {
-                updateFirebaseStatus('offline');
+                console.warn('⚠️ Skipping Firebase load - database not ready');
             }
             
             populateDurationDropdowns();
             setDatesToToday();
             setupEventListeners();
             setupIncomeTabSwitching();
-            displayCurrentWeek();
             updateMonthlyStats();
         });
 
@@ -1419,7 +1460,7 @@
                 statusEl.textContent = '✅ Firebase Connected';
                 statusEl.classList.add('connected');
             } else if (status === 'offline') {
-                statusEl.textContent = '💾 Local Storage (Offline)';
+                statusEl.textContent = '⚠️ Firebase Offline';
                 statusEl.classList.remove('connected');
             } else if (status === 'syncing') {
                 statusEl.textContent = '🔄 Syncing...';
@@ -1428,38 +1469,37 @@
         }
 
         function loadIncomeFromFirebase() {
-            if (!database) return;
+            if (!database) {
+                console.error('❌ Firebase database is null - cannot load data');
+                updateFirebaseStatus('offline');
+                return;
+            }
+            
+            console.log('📥 Setting up Firebase listener on:', DATABASE_PATH);
+            updateFirebaseStatus('syncing');
             
             database.ref(DATABASE_PATH).on('value', (snapshot) => {
                 const data = snapshot.val();
-                income = data || [];
+                income = (Array.isArray(data) ? data : []) || [];
+                console.log(`✅ Firebase listener fired - Loaded ${income.length} entries`);
                 displayCurrentWeek();
-                updateMonthlyStats();
+                updateFirebaseStatus('connected');
             }, (error) => {
-                console.error('Error loading from Firebase:', error);
+                console.error('❌ Firebase listener error:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
                 updateFirebaseStatus('offline');
-                loadIncomeFromLocalStorage();
             });
-        }
-
-        function loadIncomeFromLocalStorage() {
-            income = JSON.parse(localStorage.getItem('postiIncome')) || [];
-            displayCurrentWeek();
-            updateMonthlyStats();
         }
 
         function saveIncomeToFirebase() {
-            // Primary save to IndexedDB
-            saveIncomeToIndexedDB().catch(error => {
-                console.error('IndexedDB save failed:', error);
-                saveIncomeToLocalStorage();
-            });
-
-            // Optional: Also sync to Firebase if available
             if (!database) {
+                console.error('❌ Firebase database is null - cannot save');
+                showErrorMessage('❌ Firebase not connected. Check connection & try again.');
                 return;
             }
 
+            console.log('💾 Saving to Firebase...', income.length, 'entries');
             updateFirebaseStatus('syncing');
             clearTimeout(syncTimeout);
             
@@ -1467,181 +1507,17 @@
                 database.ref(DATABASE_PATH).set(income)
                     .then(() => {
                         updateFirebaseStatus('connected');
-                        console.log('✅ Data synced to Firebase');
+                        console.log('✅ Data synced to Firebase successfully');
                     })
                     .catch((error) => {
-                        console.error('Error saving to Firebase:', error);
+                        console.error('❌ Firebase save error:', error.code, error.message);
                         updateFirebaseStatus('offline');
+                        showErrorMessage('❌ Failed to save: ' + error.message);
                     });
             }, 500);
         }
-                    });
-            }, 500);
-        }
 
-        // ==================== INDEXEDDB STORAGE ====================
-        let db = null;
-        const DB_NAME = 'PostiTrackerDB';
-        const DB_VERSION = 1;
-        const STORE_NAME = 'income';
 
-        function initializeIndexedDB() {
-            return new Promise((resolve, reject) => {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                
-                request.onerror = () => {
-                    console.error('IndexedDB error:', request.error);
-                    reject(request.error);
-                };
-                
-                request.onsuccess = () => {
-                    db = request.result;
-                    console.log('✅ IndexedDB initialized successfully');
-                    resolve(db);
-                };
-                
-                request.onupgradeneeded = (event) => {
-                    const database = event.target.result;
-                    if (!database.objectStoreNames.contains(STORE_NAME)) {
-                        const store = database.createObjectStore(STORE_NAME, { keyPath: 'id' });
-                        store.createIndex('date', 'date', { unique: false });
-                        store.createIndex('type', 'type', { unique: false });
-                        console.log('✅ IndexedDB schema created');
-                    }
-                };
-            });
-        }
-
-        function saveIncomeToIndexedDB() {
-            return new Promise((resolve, reject) => {
-                if (!db) {
-                    console.warn('IndexedDB not available, falling back to localStorage');
-                    saveIncomeToLocalStorage();
-                    resolve();
-                    return;
-                }
-                
-                const transaction = db.transaction([STORE_NAME], 'readwrite');
-                const store = transaction.objectStore(STORE_NAME);
-                
-                // Clear existing data and write new data
-                store.clear();
-                
-                income.forEach(item => {
-                    store.add(item);
-                });
-                
-                transaction.oncomplete = () => {
-                    console.log('✅ Data saved to IndexedDB');
-                    saveIncomeToLocalStorage(); // Also save to localStorage as backup
-                    resolve();
-                };
-                
-                transaction.onerror = () => {
-                    console.error('IndexedDB save error:', transaction.error);
-                    saveIncomeToLocalStorage();
-                    reject(transaction.error);
-                };
-            });
-        }
-
-        function loadIncomeFromIndexedDB() {
-            return new Promise((resolve, reject) => {
-                if (!db) {
-                    console.warn('IndexedDB not available, loading from localStorage');
-                    loadIncomeFromLocalStorage();
-                    resolve();
-                    return;
-                }
-                
-                const transaction = db.transaction([STORE_NAME], 'readonly');
-                const store = transaction.objectStore(STORE_NAME);
-                const request = store.getAll();
-                
-                request.onsuccess = () => {
-                    income = request.result || [];
-                    console.log(`✅ Loaded ${income.length} entries from IndexedDB`);
-                    displayCurrentWeek();
-                    updateMonthlyStats();
-                    resolve();
-                };
-                
-                request.onerror = () => {
-                    console.error('IndexedDB load error:', request.error);
-                    loadIncomeFromLocalStorage();
-                    reject(request.error);
-                };
-            });
-        }
-
-        function saveIncomeToLocalStorage() {
-            try {
-                localStorage.setItem('postiIncome', JSON.stringify(income));
-                localStorage.setItem('postiIncome_backup_date', new Date().toISOString());
-                console.log('✅ Data backed up to localStorage');
-            } catch (error) {
-                console.error('localStorage save error:', error);
-            }
-        }
-
-        function exportDataAsJSON() {
-            if (income.length === 0) {
-                showErrorMessage('No data to export');
-                return;
-            }
-            
-            const dataStr = JSON.stringify(income, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `posti_income_backup_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            showSuccessMessage('✅ Data backed up successfully!');
-        }
-
-        function importDataFromJSON() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        const importedData = JSON.parse(event.target.result);
-                        if (!Array.isArray(importedData)) {
-                            showErrorMessage('Invalid file format. Must be a JSON array.');
-                            return;
-                        }
-                        
-                        // Validate data structure
-                        const valid = importedData.every(item => 
-                            item.id && item.type && item.date && item.earnings !== undefined
-                        );
-                        if (!valid) {
-                            showErrorMessage('Invalid data format. Some entries are missing required fields.');
-                            return;
-                        }
-                        
-                        income = importedData;
-                        saveIncomeToLocalStorage();
-                        displayCurrentWeek();
-                        updateMonthlyStats();
-                        showSuccessMessage(`✅ Restored ${importedData.length} income entries!`);
-                    } catch (error) {
-                        showErrorMessage('Error reading file: ' + error.message);
-                    }
-                };
-                reader.readAsText(file);
-            };
-            input.click();
-        }
 
         function populateDurationDropdowns() {
             const durationSelects = ['staffHours', 'otherHours'];
@@ -2497,6 +2373,8 @@
             displayIncomeSourceBreakdown(weekIncome);
             displayDailyBreakdown(weekIncome);
             displayWeeklyTable(weekIncome);
+            displayMonthlyBreakdown(income);
+            displayMonthlyTable(income);
             displayAnalytics(weekIncome);
             console.log('=== displayCurrentWeek completed ===');
         }
@@ -2589,12 +2467,57 @@
                 let hoursDisplay = dayHours > 0 ? `<div style="font-size: 0.9em; color: #7f8c8d; margin: 5px 0;">Hours: ${dayHours.toFixed(2)}h</div>` : '';
                 dayCard.innerHTML = `
                     <div class="day-name">${day}</div>
-                    <div class="routes-count">${entryCount} entry${entryCount !== 1 ? 'ies' : ''}</div>
+                    <div class="routes-count">${entryCount} ${entryCount === 1 ? 'entry' : 'entries'}</div>
                     ${hoursDisplay}
                     <div class="day-earnings">€${dayEarnings.toFixed(2)}</div>
                 `;
                 breakdownDiv.appendChild(dayCard);
             });
+        }
+
+        function displayMonthlyBreakdown(monthIncome) {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            // Filter income for current month
+            const monthData = monthIncome.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
+            });
+
+            const breakdownDiv = document.getElementById('monthlyBreakdown');
+            breakdownDiv.innerHTML = '';
+
+            // Get all unique dates in the current month
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayIncome = monthData.filter(item => item.date === dateStr);
+                
+                if (dayIncome.length > 0) {
+                    const dayEarnings = dayIncome.reduce((sum, item) => sum + item.earnings, 0);
+                    const dayHours = dayIncome.filter(item => item.type === 'posti').reduce((sum, item) => sum + item.duration, 0);
+                    const entryCount = dayIncome.length;
+                    const dayName = dayIncome[0].day;
+
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'day-card';
+                    let hoursDisplay = dayHours > 0 ? `<div style="font-size: 0.9em; color: #7f8c8d; margin: 5px 0;">Hours: ${dayHours.toFixed(2)}h</div>` : '';
+                    dayCard.innerHTML = `
+                        <div class="day-name">${dayName} ${day}</div>
+                        <div class="routes-count">${entryCount} ${entryCount === 1 ? 'entry' : 'entries'}</div>
+                        ${hoursDisplay}
+                        <div class="day-earnings">€${dayEarnings.toFixed(2)}</div>
+                    `;
+                    breakdownDiv.appendChild(dayCard);
+                }
+            }
+
+            if (monthData.length === 0) {
+                breakdownDiv.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 20px;">No income logged for this month</div>';
+            }
         }
 
         function displayWeeklyTable(weekIncome) {
@@ -2645,6 +2568,67 @@
 
             if (weekIncome.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">No income logged for this week</td></tr>';
+            }
+        }
+
+        function displayMonthlyTable(monthIncome) {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            // Filter income for current month
+            const monthData = monthIncome.filter(item => {
+                const itemDate = new Date(item.date);
+                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
+            });
+
+            const tbody = document.getElementById('monthlyTableBody');
+            tbody.innerHTML = '';
+
+            const sortedIncome = [...monthData].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedIncome.forEach(item => {
+                const row = document.createElement('tr');
+                const dateObj = new Date(item.date + 'T00:00:00');
+                const dateFormatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+                let details = '';
+                if (item.type === 'posti') {
+                    details = item.routeCode;
+                } else if (item.type === 'other') {
+                    details = item.source;
+                } else {
+                    details = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+                }
+
+                let actionButtons = '';
+                if (item.type === 'posti') {
+                    actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editPostiRoute('${item.id}')">Edit</button> <button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
+                } else if (item.type === 'wolt') {
+                    actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editWoltIncome('${item.id}')">Edit</button> <button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
+                } else if (item.type === 'staffpoint') {
+                    actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editStaffPointIncome('${item.id}')">Edit</button> <button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
+                } else if (item.type === 'other') {
+                    actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editOtherIncome('${item.id}')">Edit</button> <button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
+                } else {
+                    actionButtons = `<button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
+                }
+                
+                const durationDisplay = item.duration ? `${item.duration.toFixed(2)} h` : '-';
+                row.innerHTML = `
+                    <td>${dateFormatted}</td>
+                    <td>${item.day}</td>
+                    <td><strong>${getSourceEmoji(item.type)} ${formatSourceType(item.type)}</strong></td>
+                    <td>${details}</td>
+                    <td>${durationDisplay}</td>
+                    <td><strong>€${item.earnings.toFixed(2)}</strong></td>
+                    <td>${actionButtons}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            if (monthData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: #999;">No income logged for this month</td></tr>';
             }
         }
 
@@ -3021,6 +3005,34 @@
             updateDayField(document.getElementById('staffDate').value, 'staffDay');
             updateDayField(document.getElementById('otherDate').value, 'otherDay');
         });
+
+        // ==================== DEBUG DIAGNOSTICS ====================
+        function showDebugInfo() {
+            const debugInfo = {
+                'Firebase SDK': typeof firebase,
+                'Config Valid': isFirebaseConfigured,
+                'Firebase Available': firebaseAvailable,
+                'Database Connected': database ? 'Yes' : 'No',
+                'Income Entries': income.length,
+                'Database Path': DATABASE_PATH,
+                'API Key (first 20)': firebaseConfig.apiKey.substring(0, 20) + '...',
+                'Project ID': firebaseConfig.projectId,
+                'Database URL': firebaseConfig.databaseURL
+            };
+            
+            console.log('=== FIREBASE DEBUG INFO ===');
+            Object.entries(debugInfo).forEach(([key, value]) => {
+                console.log(`${key}: ${value}`);
+            });
+            
+            // Create alert with info
+            let message = '🔧 DEBUG INFO:\n\n';
+            Object.entries(debugInfo).forEach(([key, value]) => {
+                message += `${key}: ${value}\n`;
+            });
+            
+            alert(message + '\n\nCheck browser console (F12) for detailed logs');
+        }
 
         // ==================== SERVICE WORKER REGISTRATION ====================
         if ('serviceWorker' in navigator) {
