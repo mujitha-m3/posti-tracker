@@ -1176,6 +1176,7 @@
 
                 table tbody {
                     display: block;
+                    margin: 0;
                 }
 
                 table tr {
@@ -1183,8 +1184,7 @@
                     background: var(--card-bg);
                     border: 1px solid #e0e0e0;
                     border-radius: 6px;
-                    padding: 0;
-                    margin-bottom: 10px;
+                    margin-bottom: 12px;
                     overflow: hidden;
                 }
 
@@ -1194,44 +1194,46 @@
                 }
 
                 table td {
-                    display: block;
-                    width: 100%;
+                    display: grid;
+                    grid-template-columns: 85px 1fr;
+                    gap: 8px;
+                    align-items: center;
                     border: none;
                     border-bottom: 1px solid #f0f0f0;
-                    padding: 8px 12px;
-                    text-align: left;
-                    padding-left: 110px;
+                    padding: 10px 12px;
                     position: relative;
-                    min-height: 30px;
+                    font-size: 0.85em;
+                    word-break: break-word;
                 }
 
                 table td:last-child {
+                    grid-template-columns: 1fr;
                     border-bottom: none;
-                    padding-left: 12px;
+                    padding: 8px 12px;
                     display: flex;
-                    gap: 6px;
+                    gap: 8px;
+                    margin-top: 2px;
                     flex-wrap: wrap;
                 }
 
                 /* Labels for each column */
-                table tr td:nth-child(1)::before { content: "Date:"; }
-                table tr td:nth-child(2)::before { content: "Day:"; }
-                table tr td:nth-child(3)::before { content: "Source:"; }
-                table tr td:nth-child(4)::before { content: "Details:"; }
-                table tr td:nth-child(5)::before { content: "Duration:"; }
-                table tr td:nth-child(6)::before { content: "Earnings:"; }
-                table tr td:nth-child(7)::before { content: ""; }
-
                 table td::before {
                     content: attr(data-label);
-                    position: absolute;
-                    left: 12px;
                     font-weight: 700;
                     color: var(--text-light);
-                    font-size: 0.7em;
+                    font-size: 0.65em;
                     text-transform: uppercase;
-                    min-width: 100px;
+                    letter-spacing: 0.5px;
+                    white-space: nowrap;
                 }
+
+                table tr td:nth-child(1)::before { content: "Date"; }
+                table tr td:nth-child(2)::before { content: "Day"; }
+                table tr td:nth-child(3)::before { content: "Source"; }
+                table tr td:nth-child(4)::before { content: "Details"; }
+                table tr td:nth-child(5)::before { content: "Duration"; }
+                table tr td:nth-child(6)::before { content: "Earnings"; }
+                table tr td:nth-child(7)::before { content: "Actions"; }
 
                 table td:last-child::before {
                     display: none;
@@ -1240,10 +1242,12 @@
                 /* Buttons in action column */
                 table td:last-child button {
                     flex: 1;
-                    min-width: 50px;
-                    padding: 8px 10px;
-                    font-size: 0.75em;
-                    white-space: nowrap;
+                    min-width: 70px;
+                    padding: 10px 12px;
+                    font-size: 0.8em;
+                    min-height: 40px;
+                    font-weight: 600;
+                    border-radius: 4px;
                 }
             }
 
