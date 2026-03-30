@@ -1917,11 +1917,285 @@
                 font-size: 1.4em;
             }
         }
+
+        /* ==================== SIDEBAR STYLES ==================== */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.4em;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .sidebar-close {
+            display: none;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 16px 12px;
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 0.95em;
+            text-align: left;
+        }
+
+        .nav-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(4px);
+        }
+
+        .nav-button.active {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            border-color: #2980b9;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        .nav-icon {
+            font-size: 1.2em;
+            min-width: 24px;
+            text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+            letter-spacing: -0.3px;
+        }
+
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 0.85em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: auto;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0 20px;
+        }
+
+        /* Sidebar Toggle Button (Mobile) */
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+            transition: all 0.3s ease;
+            z-index: 99;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sidebar-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                height: 100vh;
+                width: 260px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 1000;
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar-close {
+                display: flex;
+            }
+
+            .sidebar-toggle {
+                display: flex;
+            }
+
+            .main-content {
+                width: 100%;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .sidebar {
+                width: 240px;
+            }
+
+            .sidebar-header {
+                padding: 18px 16px;
+            }
+
+            .sidebar-header h2 {
+                font-size: 1.2em;
+            }
+
+            .nav-button {
+                padding: 12px 14px;
+                font-size: 0.9em;
+                gap: 12px;
+            }
+
+            .nav-icon {
+                font-size: 1.1em;
+            }
+
+            .sidebar-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3em;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="firebase-status" id="firebaseStatus">🔄 Connecting...</div>
+    <div class="app-layout">
+        <!-- Left Sidebar Navigation Pane -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>📬 Tracker</h2>
+                <button class="sidebar-close" onclick="toggleSidebar()" title="Close sidebar">✕</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-button active" onclick="scrollToSection('input-section')">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-text">Log Income</span>
+                </button>
+
+                <button class="nav-button" onclick="scrollToSection('dashboard-section')">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </button>
+
+                <button class="nav-button" onclick="scrollToSection('search-section')">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-text">Search & Filter</span>
+                </button>
+
+                <button class="nav-button" onclick="scrollToSection('analytics-section')">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">Analytics</span>
+                </button>
+
+                <button class="nav-button" onclick="exportData()">
+                    <span class="nav-icon">💾</span>
+                    <span class="nav-text">Export Data</span>
+                </button>
+
+                <button class="nav-button" onclick="importData()">
+                    <span class="nav-icon">📥</span>
+                    <span class="nav-text">Import Data</span>
+                </button>
+
+                <button class="nav-button" onclick="clearAllData()">
+                    <span class="nav-icon">🗑️</span>
+                    <span class="nav-text">Clear All</span>
+                </button>
+            </nav>
+
+            <div class="sidebar-footer">
+                <p>v1.0.0</p>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Toggle -->
+        <button class="sidebar-toggle" onclick="toggleSidebar()" title="Open sidebar">☰</button>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="firebase-status" id="firebaseStatus">🔄 Connecting...</div>
         <header>
             <h1>📬 Posti Route & Gig Income Tracker</h1>
             <p>Track your daily earnings from multiple income sources</p>
@@ -1929,7 +2203,7 @@
 
         <main>
             <!-- Input Section -->
-            <section class="input-section">
+            <section class="input-section" id="input-section">
                 <h2>Log Income</h2>
                 <div class="income-type-selector">
                     <button type="button" class="income-tab active" data-income="posti" onclick="switchTab('posti')">📬 Posti Route</button>
@@ -2082,7 +2356,7 @@
             </section>
 
             <!-- Search & Filter Section -->
-            <section class="search-section">
+            <section class="search-section" id="search-section">
                 <h2>Search & Filter</h2>
                 
                 <div class="search-filters">
@@ -2130,7 +2404,7 @@
             </section>
 
             <!-- Dashboard Section -->
-            <section class="dashboard-section">
+            <section class="dashboard-section" id="dashboard-section">
                 <h2>Weekly Dashboard</h2>
                 
                 <div class="week-selector">
@@ -2250,7 +2524,7 @@
             </section>
 
             <!-- Analytics & Reports Section -->
-            <section class="analytics-section">
+            <section class="analytics-section" id="analytics-section">
                 <h2>Analytics & Insights</h2>
                 
                 <!-- Charts Row -->
@@ -2394,9 +2668,27 @@
                 </div>
             </div>
         </main>
-    </div>
+        </div> <!-- Close main-content -->
+    </div> <!-- Close app-layout -->
 
     <script>
+        // ==================== SIDEBAR FUNCTIONS ====================
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth' });
+                // Close sidebar on mobile after navigation
+                if (window.innerWidth < 768) {
+                    document.getElementById('sidebar').classList.remove('active');
+                }
+            }
+        }
+
         // ==================== FIREBASE CONFIGURATION ====================
         // Firebase credentials configured for incometracker-45df7
         
@@ -4296,6 +4588,103 @@
 
             // Hide results
             document.getElementById('searchResults').style.display = 'none';
+        }
+
+        // ==================== DATA IMPORT/EXPORT FUNCTIONS ====================
+        function exportData() {
+            if (income.length === 0) {
+                alert('No data to export!');
+                return;
+            }
+
+            const dataToExport = {
+                exportDate: new Date().toISOString(),
+                data: income,
+                totalRecords: income.length
+            };
+
+            const jsonString = JSON.stringify(dataToExport, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `income-tracker-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            alert(`✅ Exported ${income.length} records successfully!`);
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = (event) => {
+                    try {
+                        const importedData = JSON.parse(event.target.result);
+                        
+                        if (!importedData.data || !Array.isArray(importedData.data)) {
+                            alert('Invalid file format. Please check the JSON structure.');
+                            return;
+                        }
+
+                        if (income.length > 0) {
+                            if (!confirm(`You have ${income.length} existing records. Import ${importedData.data.length} new records?\n\nExisting data will be preserved.`)) {
+                                return;
+                            }
+                        }
+
+                        // Add imported data to Firebase
+                        importedData.data.forEach(item => {
+                            income.push(item);
+                            const newRef = database.ref(`income_data/${Date.now() + Math.random()}`);
+                            newRef.set(item).catch(err => console.error('Import error:', err));
+                        });
+
+                        updateDashboard(getWeekIncome());
+                        alert(`✅ Successfully imported ${importedData.data.length} records!`);
+                    } catch (error) {
+                        alert('Error parsing file: ' + error.message);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ Are you sure? This will DELETE ALL DATA permanently!\n\nThis action cannot be undone.')) {
+                return;
+            }
+
+            if (!confirm('Last confirmation: Delete all ' + income.length + ' records?')) {
+                return;
+            }
+
+            // Clear local array
+            income = [];
+
+            // Clear Firebase
+            database.ref('income_data').remove().then(() => {
+                console.log('All data cleared from Firebase');
+                updateDashboard({});
+                document.getElementById('weeklyTableContainer').innerHTML = '';
+                document.getElementById('sourceBreakdown').innerHTML = '';
+                document.getElementById('dailyBreakdown').innerHTML = '';
+                alert('✅ All data has been cleared successfully!');
+            }).catch(err => {
+                console.error('Error clearing data:', err);
+                alert('Error clearing data: ' + err.message);
+            });
         }
 
         // Auto-update day field when page loads
