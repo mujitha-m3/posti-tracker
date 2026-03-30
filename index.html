@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0, user-scalable=yes">
     <meta name="theme-color" content="#2c3e50">
     <meta name="description" content="Track your daily earnings from multiple income sources - Posti, Wolt, StaffPoint, and more">
     <link rel="manifest" href="manifest.json">
@@ -805,9 +805,19 @@
             text-align: right;
         }
 
+        /* ==================== RESPONSIVE DESIGN ==================== */
+        
+        @media (max-width: 1024px) {
+            .container {
+                max-width: 95%;
+            }
+        }
+
         @media (max-width: 768px) {
-            header h1 {
-                font-size: 1.8em;
+            /* =========== TYPOGRAPHY =========== */
+            body {
+                font-size: 14px;
+                padding: 10px;
             }
 
             header {
@@ -815,69 +825,179 @@
                 margin-bottom: 20px;
             }
 
+            header h1 {
+                font-size: 1.6em;
+                margin-bottom: 8px;
+            }
+
+            header p {
+                font-size: 0.95em;
+            }
+
+            h2 {
+                font-size: 1.3em;
+                margin: 20px 0 15px 0;
+            }
+
+            h3 {
+                font-size: 1.1em;
+                margin: 15px 0 10px 0;
+            }
+
+            /* =========== LAYOUT & SPACING =========== */
             main {
-                padding: 20px;
+                padding: 18px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            /* =========== BUTTONS =========== */
+            button {
+                min-height: 40px;
+                min-width: 40px;
+                padding: 10px 14px;
+                font-size: 0.9em;
             }
 
             .income-tab {
-                padding: 10px 16px;
+                padding: 12px 14px;
                 font-size: 0.85em;
+                margin: 4px 2px;
+                border-radius: 6px;
+            }
+
+            .btn-small {
+                padding: 6px 10px;
+                font-size: 0.8em;
+                min-width: 60px;
+                border-radius: 4px;
+            }
+
+            .btn-danger {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            /* =========== FORMS & INPUTS =========== */
+            input, select, textarea {
+                padding: 10px;
+                font-size: 16px; /* Prevents zoom on iPhone */
+                border-radius: 4px;
             }
 
             .input-section form {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
 
+            .income-type-selector {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 15px;
+            }
+
+            /* =========== GRIDS =========== */
             .dashboard-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
             }
 
             .charts-container {
                 grid-template-columns: 1fr;
-            }
-
-            .chart-card {
-                padding: 15px;
+                gap: 12px;
             }
 
             .breakdown-grid {
-                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
                 gap: 10px;
             }
 
+            /* =========== CARDS =========== */
             .day-card {
                 padding: 12px;
+                border-radius: 6px;
+                min-height: 120px;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
             }
 
             .day-card .day-name {
-                font-size: 0.85em;
+                font-size: 0.9em;
+                font-weight: 700;
+                margin-bottom: 8px;
+            }
+
+            .day-card .routes-count {
+                font-size: 0.8em;
+                margin: 4px 0;
+            }
+
+            .day-card .day-earnings {
+                font-size: 1.1em;
+                font-weight: 700;
+                color: var(--secondary-color);
+                margin-top: auto;
+            }
+
+            .dashboard-card {
+                padding: 15px;
+            }
+
+            /* =========== TABLES =========== */
+            .table-section {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             table {
                 font-size: 0.85em;
+                width: 100%;
             }
 
-            table th, table td {
-                padding: 8px 4px;
-            }
-
-            .btn-small {
-                padding: 4px 8px;
+            table th {
                 font-size: 0.75em;
+                padding: 8px 4px;
+                word-break: break-word;
+            }
+
+            table td {
+                padding: 8px 4px;
+                word-break: break-word;
+            }
+
+            /* =========== STATUS & UI =========== */
+            .firebase-status {
+                font-size: 0.8em;
+                padding: 8px 12px;
+                top: 10px;
+                right: 10px;
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
+            /* =========== TYPOGRAPHY =========== */
             body {
                 font-size: 13px;
+                padding: 8px;
+            }
+
+            header {
+                padding: 15px 12px;
+                margin-bottom: 15px;
             }
 
             header h1 {
@@ -888,74 +1008,209 @@
                 font-size: 0.9em;
             }
 
-            main {
-                padding: 15px;
-            }
-
-            .container {
-                padding: 10px;
-            }
-
-            .income-tab {
-                padding: 8px 12px;
-                font-size: 0.75em;
-                flex: 1;
-            }
-
-            .income-type-selector {
-                gap: 5px;
-            }
-
-            .breakdown-grid {
-                grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
-                gap: 8px;
-            }
-
-            .day-card {
-                padding: 10px;
-            }
-
-            .day-card .day-name {
-                font-size: 0.8em;
-                font-weight: 600;
-            }
-
-            .day-card .routes-count {
-                font-size: 0.75em;
-            }
-
-            .day-card .day-earnings {
-                font-size: 1em;
-            }
-
-            table {
-                font-size: 0.75em;
-            }
-
-            table th, table td {
-                padding: 6px 2px;
-            }
-
-            th {
-                font-size: 0.7em;
-            }
-
-            .btn-small {
-                padding: 3px 6px;
-                font-size: 0.65em;
-            }
-
-            .firebase-status {
-                font-size: 0.75em;
-                padding: 6px 10px;
-            }
-
             h2 {
                 font-size: 1.2em;
+                margin: 15px 0 10px 0;
             }
 
             h3 {
                 font-size: 1em;
+                margin: 10px 0 8px 0;
+            }
+
+            /* =========== LAYOUT =========== */
+            body {
+                line-height: 1.5;
+            }
+
+            main {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 5px;
+            }
+
+            /* =========== BUTTONS - TOUCH FRIENDLY =========== */
+            button {
+                min-height: 44px; /* iOS touch target */
+                min-width: 44px;
+                padding: 12px 16px;
+                font-size: 0.85em;
+                border-radius: 6px;
+            }
+
+            .income-tab {
+                padding: 10px 12px;
+                font-size: 0.8em;
+                margin: 4px 3px;
+                flex: 1;
+                min-height: 40px;
+            }
+
+            .income-type-selector {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .btn-small {
+                padding: 8px 10px;
+                font-size: 0.75em;
+                min-width: 55px;
+                min-height: 36px;
+            }
+
+            .btn-danger {
+                padding: 8px 10px;
+                font-size: 0.75em;
+                min-height: 36px;
+            }
+
+            /* =========== FORMS =========== */
+            input, select, textarea {
+                padding: 12px;
+                font-size: 16px; /* Prevents auto-zoom */
+                border-radius: 4px;
+                margin: 6px 0;
+            }
+
+            label {
+                display: block;
+                font-size: 0.85em;
+                margin-bottom: 4px;
+            }
+
+            .form-row {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+
+            /* =========== GRIDS =========== */
+            .breakdown-grid {
+                grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+                gap: 8px;
+            }
+
+            .dashboard-grid, .stats-grid, .charts-container {
+                margin: 10px 0;
+            }
+
+            /* =========== CARDS =========== */
+            .day-card {
+                padding: 10px;
+                border-radius: 5px;
+                min-height: 110px;
+                border-left-width: 3px;
+            }
+
+            .day-card .day-name {
+                font-size: 0.8em;
+                font-weight: 700;
+                margin-bottom: 6px;
+            }
+
+            .day-card .routes-count {
+                font-size: 0.75em;
+                color: #7f8c8d;
+                margin: 3px 0;
+            }
+
+            .day-card .day-earnings {
+                font-size: 1em;
+                font-weight: 700;
+                margin-top: auto;
+            }
+
+            /* =========== TABLES - MOBILE FRIENDLY =========== */
+            .table-section {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 12px -12px;
+                padding: 0 12px;
+            }
+
+            table {
+                font-size: 0.75em;
+                width: 100%;
+                border-collapse: collapse;
+            }
+
+            table th {
+                font-size: 0.7em;
+                padding: 6px 3px;
+                background: #34495e;
+                color: white;
+                word-break: break-word;
+            }
+
+            table td {
+                padding: 6px 3px;
+                border-bottom: 1px solid #ecf0f1;
+            }
+
+            table tr:hover {
+                background: #f9f9f9;
+            }
+
+            /* =========== DEBUG BUTTON =========== */
+            [onclick="showDebugInfo()"] {
+                padding: 6px 10px;
+                font-size: 0.75em;
+                top: 5px;
+                left: 5px;
+            }
+
+            /* =========== STATUS INDICATORS =========== */
+            .firebase-status {
+                font-size: 0.75em;
+                padding: 6px 10px;
+                top: 8px;
+                right: 8px;
+                border-radius: 4px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            body {
+                font-size: 12px;
+            }
+
+            header h1 {
+                font-size: 1.2em;
+            }
+
+            h2 {
+                font-size: 1.05em;
+            }
+
+            h3 {
+                font-size: 0.95em;
+            }
+
+            .income-tab {
+                padding: 8px 10px;
+                font-size: 0.75em;
+            }
+
+            .breakdown-grid {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 6px;
+            }
+
+            button {
+                width: 100%;
+                margin: 4px 0;
+            }
+
+            .income-type-selector {
+                flex-direction: column;
+            }
+
+            .income-type-selector button {
+                width: 100%;
             }
         }
 
