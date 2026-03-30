@@ -2202,11 +2202,6 @@
                     <span class="nav-icon">📥</span>
                     <span class="nav-text">Import Data</span>
                 </button>
-
-                <button class="nav-button" onclick="clearAllData()">
-                    <span class="nav-icon">🗑️</span>
-                    <span class="nav-text">Clear All</span>
-                </button>
             </nav>
 
             <div class="sidebar-footer">
@@ -4706,32 +4701,6 @@
             };
             
             input.click();
-        }
-
-        function clearAllData() {
-            if (!confirm('⚠️ Are you sure? This will DELETE ALL DATA permanently!\n\nThis action cannot be undone.')) {
-                return;
-            }
-
-            if (!confirm('Last confirmation: Delete all ' + income.length + ' records?')) {
-                return;
-            }
-
-            // Clear local array
-            income = [];
-
-            // Clear Firebase
-            database.ref('income_data').remove().then(() => {
-                console.log('All data cleared from Firebase');
-                updateDashboard({});
-                document.getElementById('weeklyTableContainer').innerHTML = '';
-                document.getElementById('sourceBreakdown').innerHTML = '';
-                document.getElementById('dailyBreakdown').innerHTML = '';
-                alert('✅ All data has been cleared successfully!');
-            }).catch(err => {
-                console.error('Error clearing data:', err);
-                alert('Error clearing data: ' + err.message);
-            });
         }
 
         // Auto-update day field when page loads
