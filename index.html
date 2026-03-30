@@ -116,43 +116,33 @@
         }
 
         .firebase-status {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            padding: 10px 16px;
-            border-radius: 50px;
-            font-size: 0.9em;
-            font-weight: 600;
-            background: #ecf0f1;
-            color: #7f8c8d;
-            border: 1px solid #bdc3c7;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            position: static;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            padding: 0;
+            background: #9ca3af;
+            border: none;
+            box-shadow: 0 0 0 2px var(--card-bg);
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            letter-spacing: -0.3px;
+            display: block;
+            font-size: 0;
+            margin-top: var(--spacing-md);
         }
 
         .firebase-status.syncing {
-            background: #fff3cd;
-            color: #856404;
-            border-color: #ffc107;
+            background: var(--accent-color);
             animation: pulse 1.5s infinite;
         }
 
         .firebase-status.connected {
-            background: #d4edda;
-            color: #155724;
-            border-color: #28a745;
-            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.2);
+            background: var(--success-color);
+            box-shadow: 0 0 0 2px var(--card-bg), 0 0 8px rgba(16, 185, 129, 0.5);
         }
 
         .firebase-status.offline {
-            background: #f8d7da;
-            color: #721c24;
-            border-color: #f5c6cb;
-            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+            background: var(--danger-color);
+            box-shadow: 0 0 0 2px var(--card-bg), 0 0 8px rgba(239, 68, 68, 0.5);
         }
 
         @keyframes pulse {
@@ -2123,12 +2113,67 @@
             letter-spacing: -0.3px;
         }
 
+        .nav-dropdown-container {
+            position: relative;
+            width: 100%;
+        }
+
+        .nav-dropdown-menu {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: var(--spacing-md);
+            right: var(--spacing-md);
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+        }
+
+        .nav-dropdown-menu.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dropdown-item {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: none;
+            background: transparent;
+            color: var(--text-primary);
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: 0.95em;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: var(--hover-bg);
+            color: var(--primary-color);
+        }
+
+        .dropdown-icon {
+            font-size: 1.2em;
+            display: inline-block;
+        }
+
         .sidebar-footer {
             padding: 16px 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-md);
             font-size: 0.85em;
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--text-secondary);
             margin-top: auto;
         }
 
@@ -2272,19 +2317,27 @@
                     <span class="nav-text">Analytics</span>
                 </button>
 
-                <button class="nav-button" onclick="exportData()">
-                    <span class="nav-icon">💾</span>
-                    <span class="nav-text">Export Data</span>
-                </button>
-
-                <button class="nav-button" onclick="importData()">
-                    <span class="nav-icon">📥</span>
-                    <span class="nav-text">Import Data</span>
-                </button>
+                <div class="nav-dropdown-container">
+                    <button class="nav-button" onclick="toggleBackupMenu()">
+                        <span class="nav-icon">🔄</span>
+                        <span class="nav-text">Backup & Sync</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="backupMenu">
+                        <button class="dropdown-item" onclick="exportData()">
+                            <span class="dropdown-icon">💾</span>
+                            <span>Export Data</span>
+                        </button>
+                        <button class="dropdown-item" onclick="importData()">
+                            <span class="dropdown-icon">📥</span>
+                            <span>Import Data</span>
+                        </button>
+                    </div>
+                </div>
             </nav>
 
             <div class="sidebar-footer">
                 <p>v1.0.0</p>
+                <div class="firebase-status" id="firebaseStatus" title="Database status"></div>
             </div>
         </aside>
 
@@ -2293,7 +2346,6 @@
 
         <!-- Main Content -->
         <div class="main-content">
-            <div class="firebase-status" id="firebaseStatus">🔄 Connecting...</div>
         <header>
             <h1>📬 Posti Route & Gig Income Tracker</h1>
             <p>Track your daily earnings from multiple income sources</p>
@@ -2775,6 +2827,20 @@
             const sidebar = document.getElementById('sidebar');
             sidebar.classList.toggle('active');
         }
+
+        function toggleBackupMenu() {
+            const menu = document.getElementById('backupMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close backup menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const backupMenu = document.getElementById('backupMenu');
+            const container = event.target.closest('.nav-dropdown-container');
+            if (!container && backupMenu) {
+                backupMenu.classList.remove('active');
+            }
+        });
 
         function scrollToSection(sectionId) {
             // Hide all sections
@@ -4736,6 +4802,10 @@
             URL.revokeObjectURL(url);
 
             alert(`✅ Exported ${income.length} records successfully!`);
+            
+            // Close menu after action
+            const menu = document.getElementById('backupMenu');
+            if (menu) menu.classList.remove('active');
         }
 
         function importData() {
@@ -4771,6 +4841,10 @@
 
                         updateDashboard(getWeekIncome());
                         alert(`✅ Successfully imported ${importedData.data.length} records!`);
+                        
+                        // Close menu after action
+                        const menu = document.getElementById('backupMenu');
+                        if (menu) menu.classList.remove('active');
                     } catch (error) {
                         alert('Error parsing file: ' + error.message);
                     }
