@@ -810,6 +810,11 @@
                 font-size: 1.8em;
             }
 
+            header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+            }
+
             main {
                 padding: 20px;
             }
@@ -844,8 +849,115 @@
             }
 
             .breakdown-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+                gap: 10px;
             }
+
+            .day-card {
+                padding: 12px;
+            }
+
+            .day-card .day-name {
+                font-size: 0.85em;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            table th, table td {
+                padding: 8px 4px;
+            }
+
+            .btn-small {
+                padding: 4px 8px;
+                font-size: 0.75em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                font-size: 13px;
+            }
+
+            header h1 {
+                font-size: 1.4em;
+            }
+
+            header p {
+                font-size: 0.9em;
+            }
+
+            main {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .income-tab {
+                padding: 8px 12px;
+                font-size: 0.75em;
+                flex: 1;
+            }
+
+            .income-type-selector {
+                gap: 5px;
+            }
+
+            .breakdown-grid {
+                grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+                gap: 8px;
+            }
+
+            .day-card {
+                padding: 10px;
+            }
+
+            .day-card .day-name {
+                font-size: 0.8em;
+                font-weight: 600;
+            }
+
+            .day-card .routes-count {
+                font-size: 0.75em;
+            }
+
+            .day-card .day-earnings {
+                font-size: 1em;
+            }
+
+            table {
+                font-size: 0.75em;
+            }
+
+            table th, table td {
+                padding: 6px 2px;
+            }
+
+            th {
+                font-size: 0.7em;
+            }
+
+            .btn-small {
+                padding: 3px 6px;
+                font-size: 0.65em;
+            }
+
+            .firebase-status {
+                font-size: 0.75em;
+                padding: 6px 10px;
+            }
+
+            h2 {
+                font-size: 1.2em;
+            }
+
+            h3 {
+                font-size: 1em;
+            }
+        }
 
             .route-item {
                 flex-direction: column;
