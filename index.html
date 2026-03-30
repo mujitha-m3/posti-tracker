@@ -60,8 +60,9 @@
             color: var(--text-dark);
             min-height: 100vh;
             margin: 0;
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 14px;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
         }
 
         .main-content {
@@ -86,42 +87,44 @@
 
         h2 {
             color: var(--text-dark);
-            font-size: 1.4rem;
+            font-size: 1.65rem;
             font-weight: 700;
-            margin: 0 0 var(--spacing-lg) 0;
+            margin: 0 0 var(--spacing-xl) 0;
+            letter-spacing: -0.5px;
         }
 
         h3 {
             color: var(--text-dark);
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin: var(--spacing-lg) 0 var(--spacing-md) 0;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 0 0 var(--spacing-lg) 0;
+            letter-spacing: -0.3px;
         }
 
         header {
             background: var(--card-bg);
             color: var(--text-dark);
-            padding: var(--spacing-lg) var(--spacing-xl);
+            padding: var(--spacing-xl) var(--spacing-2xl);
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 0;
             box-shadow: var(--shadow-sm);
         }
 
         header h1 {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            margin: 0 0 var(--spacing-xs) 0;
-            letter-spacing: 0.5px;
+            margin: 0 0 var(--spacing-sm) 0;
+            letter-spacing: -0.5px;
             color: var(--text-dark);
         }
 
         header p {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             opacity: 1;
             font-weight: 400;
             margin: 0;
             letter-spacing: 0;
-            color: var(--text-light);
+            color: var(--text-secondary);
         }
 
         .firebase-status {
@@ -227,20 +230,21 @@
 
         .input-section {
             background: var(--card-bg);
-            padding: var(--spacing-lg);
-            border-radius: 8px;
+            padding: var(--spacing-xl);
+            border-radius: 12px;
             border: 1px solid var(--border-color);
-            margin-bottom: var(--spacing-lg);
-            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
         }
 
         .input-section h2 {
             color: var(--text-dark);
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin: 0 0 var(--spacing-lg) 0;
-            padding-bottom: var(--spacing-md);
-            border-bottom: 1px solid var(--border-color);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 0 0 var(--spacing-xl) 0;
+            padding-bottom: 0;
+            border-bottom: none;
+            letter-spacing: -0.5px;
         }
 
         .income-form {
@@ -292,28 +296,30 @@
 
         .form-group label {
             font-weight: 600;
-            margin-bottom: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
             color: var(--text-dark);
-            font-size: 0.9rem;
-            letter-spacing: -0.2px;
+            font-size: 0.95rem;
+            letter-spacing: 0;
+            display: block;
         }
 
         .form-group input,
         .form-group select {
-            padding: var(--spacing-sm) var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-lg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
             background: var(--hover-bg);
             color: var(--text-dark);
+            width: 100%;
         }
 
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 12px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1), inset 0 0 0 1px var(--primary-color);
             background: var(--card-bg);
         }
 
@@ -324,23 +330,24 @@
         }
 
         .btn-primary {
-            padding: var(--spacing-sm) var(--spacing-lg);
+            padding: var(--spacing-md) var(--spacing-xl);
             background: var(--primary-color);
             color: #000000;
             border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             grid-column: 1 / -1;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 212, 255, 0.25);
+            letter-spacing: 0.3px;
         }
 
         .btn-primary:hover {
             background: var(--secondary-color);
             transform: translateY(-2px);
-            box-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            box-shadow: 0 6px 24px rgba(0, 212, 255, 0.4);
         }
 
         .btn-primary:active {
