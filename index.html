@@ -2137,6 +2137,65 @@
             display: inline-block;
         }
 
+        /* Theme Toggle Switch */
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: default;
+        }
+
+        .settings-item:hover {
+            background: transparent !important;
+            color: var(--text-primary) !important;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-flex;
+            width: 50px;
+            height: 24px;
+            margin-left: var(--spacing-md);
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--border-color);
+            border-radius: 24px;
+            transition: 0.3s ease;
+        }
+
+        .slider::before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider::before {
+            transform: translateX(26px);
+        }
+
         .sidebar-footer {
             padding: 16px 20px;
             border-top: 1px solid var(--border-color);
@@ -2303,6 +2362,22 @@
                             <span class="dropdown-icon">📥</span>
                             <span>Import Data</span>
                         </button>
+                    </div>
+                </div>
+
+                <div class="nav-dropdown-container">
+                    <button class="nav-button" onclick="toggleSettingsMenu()">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </button>
+                    <div class="nav-dropdown-menu" id="settingsMenu">
+                        <div class="dropdown-item settings-item">
+                            <span>🌙 Theme</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="themeToggle" onchange="toggleTheme()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
             </nav>
@@ -2802,17 +2877,108 @@
 
         function toggleBackupMenu() {
             const menu = document.getElementById('backupMenu');
+            const settingsMenu = document.getElementById('settingsMenu');
             menu.classList.toggle('active');
+            if (settingsMenu) settingsMenu.classList.remove('active');
         }
 
-        // Close backup menu when clicking outside
+        function toggleSettingsMenu() {
+            const menu = document.getElementById('settingsMenu');
+            const backupMenu = document.getElementById('backupMenu');
+            menu.classList.toggle('active');
+            if (backupMenu) backupMenu.classList.remove('active');
+        }
+
+        // Close menus when clicking outside
         document.addEventListener('click', function(event) {
             const backupMenu = document.getElementById('backupMenu');
+            const settingsMenu = document.getElementById('settingsMenu');
             const container = event.target.closest('.nav-dropdown-container');
-            if (!container && backupMenu) {
-                backupMenu.classList.remove('active');
+            if (!container) {
+                if (backupMenu) backupMenu.classList.remove('active');
+                if (settingsMenu) settingsMenu.classList.remove('active');
             }
         });
+
+        // Theme Toggle
+        function toggleTheme() {
+            const toggle = document.getElementById('themeToggle');
+            const isDark = toggle.checked;
+            
+            if (isDark) {
+                applyDarkTheme();
+                localStorage.setItem('theme', 'dark');
+            } else {
+                applyLightTheme();
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        function applyDarkTheme() {
+            const root = document.documentElement;
+            root.style.setProperty('--primary-color', '#00d4ff');
+            root.style.setProperty('--secondary-color', '#00b4d8');
+            root.style.setProperty('--accent-color', '#00d4ff');
+            root.style.setProperty('--success-color', '#00d4ff');
+            root.style.setProperty('--light-bg', '#0f1419');
+            root.style.setProperty('--card-bg', '#1a1f2e');
+            root.style.setProperty('--text-dark', '#ffffff');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--text-secondary', '#b0b9c3');
+            root.style.setProperty('--text-light', '#7a8592');
+            root.style.setProperty('--border-color', '#2d3748');
+            root.style.setProperty('--hover-bg', '#252d3d');
+            root.style.setProperty('--shadow-sm', '0 2px 8px rgba(0, 212, 255, 0.1)');
+            root.style.setProperty('--shadow-md', '0 4px 12px rgba(0, 212, 255, 0.15)');
+            root.style.setProperty('--shadow-lg', '0 8px 24px rgba(0, 212, 255, 0.2)');
+            document.body.classList.add('dark-theme');
+            document.body.classList.remove('light-theme');
+        }
+
+        function applyLightTheme() {
+            const root = document.documentElement;
+            root.style.setProperty('--primary-color', '#1e40af');
+            root.style.setProperty('--secondary-color', '#3b82f6');
+            root.style.setProperty('--accent-color', '#f59e0b');
+            root.style.setProperty('--success-color', '#10b981');
+            root.style.setProperty('--danger-color', '#ef4444');
+            root.style.setProperty('--light-bg', '#f9fafb');
+            root.style.setProperty('--card-bg', '#ffffff');
+            root.style.setProperty('--text-dark', '#111827');
+            root.style.setProperty('--text-primary', '#111827');
+            root.style.setProperty('--text-secondary', '#6b7280');
+            root.style.setProperty('--text-light', '#9ca3af');
+            root.style.setProperty('--border-color', '#e5e7eb');
+            root.style.setProperty('--hover-bg', '#f3f4f6');
+            root.style.setProperty('--shadow-sm', '0 1px 2px 0 rgba(0, 0, 0, 0.05)');
+            root.style.setProperty('--shadow-md', '0 4px 6px -1px rgba(0, 0, 0, 0.1)');
+            root.style.setProperty('--shadow-lg', '0 10px 25px -5px rgba(0, 0, 0, 0.1)');
+            document.body.classList.add('light-theme');
+            document.body.classList.remove('dark-theme');
+        }
+
+        // Initialize theme from localStorage on page load
+        function initializeTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const toggle = document.getElementById('themeToggle');
+            
+            if (toggle) {
+                if (savedTheme === 'dark') {
+                    toggle.checked = true;
+                    applyDarkTheme();
+                } else {
+                    toggle.checked = false;
+                    applyLightTheme();
+                }
+            }
+        }
+
+        // Initialize theme when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeTheme);
+        } else {
+            initializeTheme();
+        }
 
         function scrollToSection(sectionId) {
             // Hide all sections
