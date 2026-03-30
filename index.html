@@ -1386,21 +1386,32 @@
             }
 
             .chart-card {
-                padding: 15px;
+                padding: 12px 10px;
                 margin-bottom: 16px;
             }
 
             .chart-card h3 {
-                font-size: 0.95em;
-                margin-bottom: 12px;
+                font-size: 1em;
+                margin-bottom: 10px;
+                color: var(--primary-color);
+                text-align: center;
             }
 
             .chart-card canvas {
-                max-height: 200px !important;
+                max-height: 260px !important;
+                width: 100% !important;
             }
 
             .chart-card > div {
-                min-height: 180px;
+                min-height: 240px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            /* Ensure charts container has proper aspect */
+            .charts-container {
+                display: block !important;
             }
 
             .routes-analytics {
@@ -3505,6 +3516,9 @@
                     window.earningsChartInstance.destroy();
                 }
                 
+                // Detect if mobile
+                const isMobile = window.innerWidth <= 600;
+                
                 window.earningsChartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: {
@@ -3528,14 +3542,31 @@
                         plugins: {
                             legend: {
                                 display: false
+                            },
+                            tooltip: {
+                                titleFont: { size: isMobile ? 10 : 12 },
+                                bodyFont: { size: isMobile ? 10 : 12 },
+                                padding: isMobile ? 6 : 10
                             }
                         },
                         scales: {
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: isMobile ? 10 : 12
+                                    },
+                                    maxRotation: 45,
+                                    minRotation: 45
+                                }
+                            },
                             y: {
                                 beginAtZero: true,
                                 ticks: {
+                                    font: {
+                                        size: isMobile ? 10 : 12
+                                    },
                                     callback: function(value) {
-                                        return '€' + value.toFixed(2);
+                                        return '€' + value.toFixed(0);
                                     }
                                 }
                             }
@@ -3620,6 +3651,9 @@
                     window.sourceChartInstance.destroy();
                 }
                 
+                // Detect if mobile
+                const isMobileChart = window.innerWidth <= 600;
+                
                 window.sourceChartInstance = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
@@ -3638,12 +3672,17 @@
                             legend: {
                                 position: 'bottom',
                                 labels: {
-                                    padding: 15,
+                                    padding: isMobileChart ? 8 : 15,
                                     font: {
-                                        size: 12,
+                                        size: isMobileChart ? 11 : 12,
                                         weight: '600'
                                     }
                                 }
+                            },
+                            tooltip: {
+                                titleFont: { size: isMobileChart ? 10 : 12 },
+                                bodyFont: { size: isMobileChart ? 10 : 12 },
+                                padding: isMobileChart ? 6 : 10
                             }
                         }
                     }
