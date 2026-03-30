@@ -3199,6 +3199,7 @@
                 income = (Array.isArray(data) ? data : []) || [];
                 console.log(`✅ Firebase listener fired - Loaded ${income.length} entries`);
                 displayCurrentWeek();
+                updateMonthlyStats();
                 updateFirebaseStatus('connected');
             }, (error) => {
                 console.error('❌ Firebase listener error:', error);
