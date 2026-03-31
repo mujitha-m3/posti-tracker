@@ -611,6 +611,176 @@
             line-height: 1;
         }
 
+        /* =========== MONTHLY TARGET SECTION =========== */
+        .target-section {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #0ea5e9 100%);
+            padding: var(--spacing-xl);
+            border-radius: 12px;
+            margin-bottom: var(--spacing-xl);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+            color: white;
+        }
+
+        .target-section h3 {
+            color: white;
+            margin: 0 0 var(--spacing-lg) 0;
+        }
+
+        .target-input-group {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: var(--spacing-lg);
+            align-items: flex-end;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .target-input-field {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .target-input-field label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: white;
+            opacity: 0.95;
+        }
+
+        .target-input-field input {
+            padding: var(--spacing-md) var(--spacing-lg);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .target-input-field input:focus {
+            outline: none;
+            border-color: #ffffff;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .target-button-group {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .btn-set-target {
+            padding: var(--spacing-md) var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-set-target:hover {
+            background: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-clear-target {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.9rem;
+        }
+
+        .btn-clear-target:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: #ffffff;
+        }
+
+        .target-display-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .target-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: var(--spacing-lg);
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .target-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .target-card h4 {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin: 0 0 var(--spacing-md) 0;
+            letter-spacing: 0.5px;
+        }
+
+        .target-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 0 0 var(--spacing-md) 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .target-progress {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 10px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+        }
+
+        .no-target-message {
+            text-align: center;
+            padding: var(--spacing-xl);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
         .daily-breakdown,
         .income-breakdown,
         .monthly-breakdown {
@@ -906,7 +1076,6 @@
             box-shadow: var(--shadow-sm);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--border-color);
-        }
         }
 
         .source-stat-card:hover {
@@ -2722,6 +2891,26 @@
                     <button id="nextWeek" class="btn-small">Next Week →</button>
                 </div>
 
+                <!-- Monthly Target Section -->
+                <div class="target-section">
+                    <h3>🎯 Monthly Target Setup</h3>
+                    
+                    <div class="target-input-group">
+                        <div class="target-input-field">
+                            <label for="monthlyTargetInput">Set Monthly Target (€):</label>
+                            <input type="number" id="monthlyTargetInput" placeholder="e.g., 2000" min="0" step="100">
+                        </div>
+                        <div class="target-button-group">
+                            <button class="btn-set-target" onclick="setMonthlyTarget()">Set Target</button>
+                            <button class="btn-clear-target" onclick="deleteMonthlyTarget()">Clear</button>
+                        </div>
+                    </div>
+
+                    <div id="targetDisplayArea">
+                        <div class="no-target-message">Set a monthly target to start tracking your goals</div>
+                    </div>
+                </div>
+
                 <div class="dashboard-grid">
                     <div class="dashboard-card">
                         <h3>Total Weekly Earnings</h3>
@@ -4248,6 +4437,7 @@
             console.log('Week income:', weekIncome);
             
             updateDashboard(weekIncome);
+            updateTargetDisplay();
             displayIncomeSourceBreakdown(weekIncome);
             displayDailyBreakdown(weekIncome);
             displayWeeklyTable(weekIncome);
@@ -5219,6 +5409,7 @@
                         });
 
                         updateDashboard(getWeekIncome());
+                        updateTargetDisplay();
                         alert(`✅ Successfully imported ${importedData.data.length} records!`);
                         
                         // Close menu after action
@@ -5242,6 +5433,221 @@
             updateDayField(document.getElementById('otherDate').value, 'otherDay');
         });
 
+        // ==================== MONTHLY TARGET FUNCTIONS ====================
+        let monthlyTarget = null;
+
+        function setMonthlyTarget() {
+            const inputValue = document.getElementById('monthlyTargetInput').value;
+            
+            if (!inputValue || parseFloat(inputValue) <= 0) {
+                alert('Please enter a valid monthly target amount');
+                return;
+            }
+
+            const target = parseFloat(inputValue);
+            monthlyTarget = {
+                amount: target,
+                setDate: new Date().toISOString().split('T')[0],
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
+            };
+
+            // Save to Firebase
+            saveTargetToFirebase(monthlyTarget);
+            updateTargetDisplay();
+            document.getElementById('monthlyTargetInput').value = '';
+        }
+
+        function deleteMonthlyTarget() {
+            if (!monthlyTarget) {
+                alert('No target set yet');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete this target?')) {
+                database.ref('monthly_target').remove();
+                monthlyTarget = null;
+                updateTargetDisplay();
+            }
+        }
+
+        function calculateWeeklyTarget(monthlyTargetAmount) {
+            return {
+                week1: (monthlyTargetAmount / 2).toFixed(2),
+                week2: (monthlyTargetAmount / 2).toFixed(2),
+                total: monthlyTargetAmount.toFixed(2)
+            };
+        }
+
+        function calculateDailyTarget(monthlyTargetAmount) {
+            return (monthlyTargetAmount / 30).toFixed(2);
+        }
+
+        function getCurrentMonthIncome() {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            return income.filter(item => {
+                const itemDate = new Date(item.date + 'T00:00:00');
+                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
+            }).reduce((sum, item) => sum + item.earnings, 0);
+        }
+
+        function updateTargetDisplay() {
+            const displayArea = document.getElementById('targetDisplayArea');
+            
+            if (!monthlyTarget) {
+                displayArea.innerHTML = '<div class="no-target-message">Set a monthly target to start tracking your goals</div>';
+                return;
+            }
+
+            const monthlyAmount = monthlyTarget.amount;
+            const weeklyTargets = calculateWeeklyTarget(monthlyAmount);
+            const dailyTarget = calculateDailyTarget(monthlyAmount);
+            const currentIncome = getCurrentMonthIncome();
+            
+            const progressPercentage = Math.min((currentIncome / monthlyAmount) * 100, 100);
+            const remaining = Math.max(monthlyAmount - currentIncome, 0);
+
+            const week1Start = new Date();
+            week1Start.setDate(1);
+            const week1End = new Date();
+            week1End.setDate(15);
+            
+            const week2Start = new Date();
+            week2Start.setDate(16);
+            const lastDay = new Date(week2Start.getFullYear(), week2Start.getMonth() + 1, 0);
+            const week2End = lastDay;
+
+            const week1Income = income.filter(item => {
+                const itemDate = new Date(item.date + 'T00:00:00');
+                return itemDate.getMonth() === week1Start.getMonth() && 
+                       itemDate.getFullYear() === week1Start.getFullYear() &&
+                       itemDate.getDate() >= 1 && itemDate.getDate() <= 15;
+            }).reduce((sum, item) => sum + item.earnings, 0);
+
+            const week2Income = income.filter(item => {
+                const itemDate = new Date(item.date + 'T00:00:00');
+                return itemDate.getMonth() === week2Start.getMonth() && 
+                       itemDate.getFullYear() === week2Start.getFullYear() &&
+                       itemDate.getDate() >= 16;
+            }).reduce((sum, item) => sum + item.earnings, 0);
+
+            const week1Progress = Math.min((week1Income / weeklyTargets.week1) * 100, 100);
+            const week2Progress = Math.min((week2Income / weeklyTargets.week2) * 100, 100);
+
+            displayArea.innerHTML = `
+                <div class="target-display-grid">
+                    <!-- Monthly Target Card -->
+                    <div class="target-card">
+                        <h4>Monthly Target</h4>
+                        <div class="target-value">€${monthlyAmount.toFixed(2)}</div>
+                        <div class="target-progress">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span>${currentIncome.toFixed(2)} / €${monthlyAmount.toFixed(2)}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>${progressPercentage.toFixed(0)}%</span>
+                                <span>Remaining: €${remaining.toFixed(2)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Week 1 Card -->
+                    <div class="target-card">
+                        <h4>Week 1-15 (1st Half)</h4>
+                        <div class="target-value">€${weeklyTargets.week1}</div>
+                        <div class="target-progress">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span>${week1Income.toFixed(2)} / €${weeklyTargets.week1}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${week1Progress}%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>${week1Progress.toFixed(0)}%</span>
+                                <span>Earned</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Week 2 Card -->
+                    <div class="target-card">
+                        <h4>Week 16-31 (2nd Half)</h4>
+                        <div class="target-value">€${weeklyTargets.week2}</div>
+                        <div class="target-progress">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span>${week2Income.toFixed(2)} / €${weeklyTargets.week2}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${week2Progress}%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>${week2Progress.toFixed(0)}%</span>
+                                <span>Earned</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Daily Target Card -->
+                    <div class="target-card">
+                        <h4>Daily Target (Average)</h4>
+                        <div class="target-value">€${dailyTarget}</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--spacing-md);">
+                            <div>€${monthlyAmount.toFixed(2)} ÷ 30 days</div>
+                            <div style="font-size: 0.8rem; margin-top: var(--spacing-sm); opacity: 0.8;">
+                                To stay on track
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveTargetToFirebase(target) {
+            try {
+                database.ref('monthly_target').set(target)
+                    .then(() => {
+                        showMessage('✅ Monthly target saved successfully!', 'success');
+                    })
+                    .catch(err => {
+                        console.error('Error saving target:', err);
+                        showMessage('❌ Failed to save target', 'error');
+                    });
+            } catch (error) {
+                console.error('Firebase error:', error);
+            }
+        }
+
+        function loadTargetFromFirebase() {
+            try {
+                database.ref('monthly_target').once('value', snapshot => {
+                    if (snapshot.exists()) {
+                        monthlyTarget = snapshot.val();
+                        // Only display if it's for the current month
+                        const now = new Date();
+                        if (monthlyTarget.month === now.getMonth() && monthlyTarget.year === now.getFullYear()) {
+                            updateTargetDisplay();
+                        } else {
+                            monthlyTarget = null;
+                            updateTargetDisplay();
+                        }
+                    } else {
+                        updateTargetDisplay();
+                    }
+                });
+            } catch (error) {
+                console.error('Error loading target:', error);
+            }
+        }
+
         // ==================== SERVICE WORKER REGISTRATION ====================
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -5254,6 +5660,11 @@
                     });
             });
         }
+
+        // Load targets when app initializes
+        setTimeout(() => {
+            loadTargetFromFirebase();
+        }, 2000);
     </script>
 </body>
 </html>
