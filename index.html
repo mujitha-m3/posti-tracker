@@ -628,35 +628,10 @@
 
         .target-input-group {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
+            grid-template-columns: 1fr auto auto;
             gap: var(--spacing-lg);
             align-items: flex-end;
             margin-bottom: var(--spacing-xl);
-        }
-
-        @media (max-width: 1200px) {
-            .target-input-group {
-                grid-template-columns: 1fr 1fr;
-            }
-
-            .target-button-group {
-                grid-column: 1 / -1;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .target-input-group {
-                grid-template-columns: 1fr;
-            }
-
-            .target-button-group {
-                grid-column: 1 / -1;
-                justify-content: stretch;
-            }
-
-            .target-button-group button {
-                flex: 1;
-            }
         }
 
         .target-input-field {
@@ -2918,20 +2893,12 @@
 
                 <!-- Monthly Target Section -->
                 <div class="target-section">
-                    <h3>🎯 Target Setup</h3>
+                    <h3>🎯 Monthly Target Setup</h3>
                     
                     <div class="target-input-group">
                         <div class="target-input-field">
-                            <label for="monthlyTargetInput">Target Amount (€):</label>
+                            <label for="monthlyTargetInput">Set Monthly Target (€):</label>
                             <input type="number" id="monthlyTargetInput" placeholder="e.g., 2000" min="0" step="100">
-                        </div>
-                        <div class="target-input-field">
-                            <label for="targetDuration">Duration (Days):</label>
-                            <input type="number" id="targetDuration" placeholder="e.g., 30" min="1" max="365" value="30" step="1">
-                        </div>
-                        <div class="target-input-field">
-                            <label for="targetStartDate">Start Date:</label>
-                            <input type="date" id="targetStartDate">
                         </div>
                         <div class="target-button-group">
                             <button class="btn-set-target" onclick="setMonthlyTarget()">Set Target</button>
@@ -2940,7 +2907,7 @@
                     </div>
 
                     <div id="targetDisplayArea">
-                        <div class="no-target-message">Set a target amount, duration, and start date to track your goals</div>
+                        <div class="no-target-message">Set a monthly target to start tracking your goals</div>
                     </div>
                 </div>
 
@@ -5470,43 +5437,25 @@
         let monthlyTarget = null;
 
         function setMonthlyTarget() {
-            const targetAmount = document.getElementById('monthlyTargetInput').value;
-            const duration = document.getElementById('targetDuration').value;
-            const startDateInput = document.getElementById('targetStartDate').value;
+            const inputValue = document.getElementById('monthlyTargetInput').value;
             
-            if (!targetAmount || parseFloat(targetAmount) <= 0) {
-                alert('Please enter a valid target amount');
+            if (!inputValue || parseFloat(inputValue) <= 0) {
+                alert('Please enter a valid monthly target amount');
                 return;
             }
 
-            if (!duration || parseInt(duration) <= 0) {
-                alert('Please enter a valid duration (in days)');
-                return;
-            }
-
-            if (!startDateInput) {
-                alert('Please select a start date');
-                return;
-            }
-
-            const startDate = new Date(startDateInput);
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + parseInt(duration) - 1);
-
+            const target = parseFloat(inputValue);
             monthlyTarget = {
-                amount: parseFloat(targetAmount),
-                duration: parseInt(duration),
-                startDate: startDateInput,
-                endDate: endDate.toISOString().split('T')[0],
-                setDate: new Date().toISOString().split('T')[0]
+                amount: target,
+                setDate: new Date().toISOString().split('T')[0],
+                month: new Date().getMonth(),
+                year: new Date().getFullYear()
             };
 
             // Save to Firebase
             saveTargetToFirebase(monthlyTarget);
             updateTargetDisplay();
             document.getElementById('monthlyTargetInput').value = '';
-            document.getElementById('targetDuration').value = '30';
-            document.getElementById('targetStartDate').value = '';
         }
 
         function deleteMonthlyTarget() {
@@ -5522,29 +5471,16 @@
             }
         }
 
-        function calculateWeeklyTarget(monthlyTargetAmount, duration) {
-            const halfDuration = Math.ceil(duration / 2);
-            const week1Portion = (monthlyTargetAmount * halfDuration) / duration;
-            const week2Portion = monthlyTargetAmount - week1Portion;
+        function calculateWeeklyTarget(monthlyTargetAmount) {
             return {
-                week1: week1Portion.toFixed(2),
-                week2: week2Portion.toFixed(2),
+                week1: (monthlyTargetAmount / 2).toFixed(2),
+                week2: (monthlyTargetAmount / 2).toFixed(2),
                 total: monthlyTargetAmount.toFixed(2)
             };
         }
 
-        function calculateDailyTarget(monthlyTargetAmount, duration) {
-            return (monthlyTargetAmount / duration).toFixed(2);
-        }
-
-        function getIncomeInDateRange(startDate, endDate) {
-            const start = new Date(startDate + 'T00:00:00');
-            const end = new Date(endDate + 'T23:59:59');
-
-            return income.filter(item => {
-                const itemDate = new Date(item.date + 'T00:00:00');
-                return itemDate >= start && itemDate <= end;
-            }).reduce((sum, item) => sum + item.earnings, 0);
+        function calculateDailyTarget(monthlyTargetAmount) {
+            return (monthlyTargetAmount / 30).toFixed(2);
         }
 
         function getCurrentMonthIncome() {
@@ -5562,66 +5498,54 @@
             const displayArea = document.getElementById('targetDisplayArea');
             
             if (!monthlyTarget) {
-                displayArea.innerHTML = '<div class="no-target-message">Set a target amount, duration, and start date to track your goals</div>';
+                displayArea.innerHTML = '<div class="no-target-message">Set a monthly target to start tracking your goals</div>';
                 return;
             }
 
             const monthlyAmount = monthlyTarget.amount;
-            const duration = monthlyTarget.duration;
-            const startDate = monthlyTarget.startDate;
-            const endDate = monthlyTarget.endDate;
-            
-            const weeklyTargets = calculateWeeklyTarget(monthlyAmount, duration);
-            const dailyTarget = calculateDailyTarget(monthlyAmount, duration);
-            const currentIncome = getIncomeInDateRange(startDate, endDate);
+            const weeklyTargets = calculateWeeklyTarget(monthlyAmount);
+            const dailyTarget = calculateDailyTarget(monthlyAmount);
+            const currentIncome = getCurrentMonthIncome();
             
             const progressPercentage = Math.min((currentIncome / monthlyAmount) * 100, 100);
             const remaining = Math.max(monthlyAmount - currentIncome, 0);
 
-            // Calculate midpoint for weekly split
-            const startDateObj = new Date(startDate);
-            const endDateObj = new Date(endDate);
-            const midDate = new Date(startDateObj);
-            midDate.setDate(midDate.getDate() + Math.floor(duration / 2));
-            const midDateString = midDate.toISOString().split('T')[0];
+            const week1Start = new Date();
+            week1Start.setDate(1);
+            const week1End = new Date();
+            week1End.setDate(15);
+            
+            const week2Start = new Date();
+            week2Start.setDate(16);
+            const lastDay = new Date(week2Start.getFullYear(), week2Start.getMonth() + 1, 0);
+            const week2End = lastDay;
 
-            // Split into two weeks
             const week1Income = income.filter(item => {
-                const itemDate = new Date(item.date);
-                const startD = new Date(startDate);
-                const midD = new Date(midDateString);
-                return itemDate >= startD && itemDate <= midD;
+                const itemDate = new Date(item.date + 'T00:00:00');
+                return itemDate.getMonth() === week1Start.getMonth() && 
+                       itemDate.getFullYear() === week1Start.getFullYear() &&
+                       itemDate.getDate() >= 1 && itemDate.getDate() <= 15;
             }).reduce((sum, item) => sum + item.earnings, 0);
 
             const week2Income = income.filter(item => {
-                const itemDate = new Date(item.date);
-                const midD = new Date(midDateString);
-                const endD = new Date(endDate);
-                return itemDate > midD && itemDate <= endD;
+                const itemDate = new Date(item.date + 'T00:00:00');
+                return itemDate.getMonth() === week2Start.getMonth() && 
+                       itemDate.getFullYear() === week2Start.getFullYear() &&
+                       itemDate.getDate() >= 16;
             }).reduce((sum, item) => sum + item.earnings, 0);
 
             const week1Progress = Math.min((week1Income / weeklyTargets.week1) * 100, 100);
             const week2Progress = Math.min((week2Income / weeklyTargets.week2) * 100, 100);
 
-            // Format dates for display
-            const startFormatted = new Date(startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const midFormatted = new Date(midDateString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const endFormatted = new Date(endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-            const daysRemaining = Math.max(0, Math.floor((new Date(endDate) - new Date()) / (1000 * 60 * 60 * 24)));
-
             displayArea.innerHTML = `
                 <div class="target-display-grid">
-                    <!-- Target Card -->
+                    <!-- Monthly Target Card -->
                     <div class="target-card">
-                        <h4>Target Period</h4>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--spacing-md);">
-                            <div>${startFormatted} → ${endFormatted}</div>
-                            <div style="font-size: 0.85rem; margin-top: var(--spacing-sm);">${duration} days | ${daysRemaining} days left</div>
-                        </div>
+                        <h4>Monthly Target</h4>
                         <div class="target-value">€${monthlyAmount.toFixed(2)}</div>
                         <div class="target-progress">
                             <div class="progress-label">
-                                <span>Overall Progress</span>
+                                <span>Progress</span>
                                 <span>${currentIncome.toFixed(2)} / €${monthlyAmount.toFixed(2)}</span>
                             </div>
                             <div class="progress-bar">
@@ -5636,7 +5560,7 @@
 
                     <!-- Week 1 Card -->
                     <div class="target-card">
-                        <h4>First Half (${startFormatted} - ${midFormatted})</h4>
+                        <h4>Week 1-15 (1st Half)</h4>
                         <div class="target-value">€${weeklyTargets.week1}</div>
                         <div class="target-progress">
                             <div class="progress-label">
@@ -5655,7 +5579,7 @@
 
                     <!-- Week 2 Card -->
                     <div class="target-card">
-                        <h4>Second Half (${midFormatted} - ${endFormatted})</h4>
+                        <h4>Week 16-31 (2nd Half)</h4>
                         <div class="target-value">€${weeklyTargets.week2}</div>
                         <div class="target-progress">
                             <div class="progress-label">
@@ -5677,85 +5601,7 @@
                         <h4>Daily Target (Average)</h4>
                         <div class="target-value">€${dailyTarget}</div>
                         <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--spacing-md);">
-                            <div>€${monthlyAmount.toFixed(2)} ÷ ${duration} days</div>
-                            <div style="font-size: 0.8rem; margin-top: var(--spacing-sm); opacity: 0.8;">
-                                To stay on track
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-            displayArea.innerHTML = `
-                <div class="target-display-grid">
-                    <!-- Target Card -->
-                    <div class="target-card">
-                        <h4>Target Period</h4>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: var(--spacing-md);">
-                            <div>${startFormatted} → ${endFormatted}</div>
-                            <div style="font-size: 0.85rem; margin-top: var(--spacing-sm);">${duration} days | ${daysRemaining} days left</div>
-                        </div>
-                        <div class="target-value">€${monthlyAmount.toFixed(2)}</div>
-                        <div class="target-progress">
-                            <div class="progress-label">
-                                <span>Overall Progress</span>
-                                <span>${currentIncome.toFixed(2)} / €${monthlyAmount.toFixed(2)}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${progressPercentage}%"></div>
-                            </div>
-                            <div class="progress-label">
-                                <span>${progressPercentage.toFixed(0)}%</span>
-                                <span>Remaining: €${remaining.toFixed(2)}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Week 1 Card -->
-                    <div class="target-card">
-                        <h4>First Half (${startFormatted} - ${midFormatted})</h4>
-                        <div class="target-value">€${weeklyTargets.week1}</div>
-                        <div class="target-progress">
-                            <div class="progress-label">
-                                <span>Progress</span>
-                                <span>${week1Income.toFixed(2)} / €${weeklyTargets.week1}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${week1Progress}%"></div>
-                            </div>
-                            <div class="progress-label">
-                                <span>${week1Progress.toFixed(0)}%</span>
-                                <span>Earned</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Week 2 Card -->
-                    <div class="target-card">
-                        <h4>Second Half (${midFormatted} - ${endFormatted})</h4>
-                        <div class="target-value">€${weeklyTargets.week2}</div>
-                        <div class="target-progress">
-                            <div class="progress-label">
-                                <span>Progress</span>
-                                <span>${week2Income.toFixed(2)} / €${weeklyTargets.week2}</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: ${week2Progress}%"></div>
-                            </div>
-                            <div class="progress-label">
-                                <span>${week2Progress.toFixed(0)}%</span>
-                                <span>Earned</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Daily Target Card -->
-                    <div class="target-card">
-                        <h4>Daily Target (Average)</h4>
-                        <div class="target-value">€${dailyTarget}</div>
-                        <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--spacing-md);">
-                            <div>€${monthlyAmount.toFixed(2)} ÷ ${duration} days</div>
+                            <div>€${monthlyAmount.toFixed(2)} ÷ 30 days</div>
                             <div style="font-size: 0.8rem; margin-top: var(--spacing-sm); opacity: 0.8;">
                                 To stay on track
                             </div>
@@ -5785,12 +5631,9 @@
                 database.ref('monthly_target').once('value', snapshot => {
                     if (snapshot.exists()) {
                         monthlyTarget = snapshot.val();
-                        // Check if target is still active (end date is in the future)
-                        const endDate = new Date(monthlyTarget.endDate);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        
-                        if (endDate >= today) {
+                        // Only display if it's for the current month
+                        const now = new Date();
+                        if (monthlyTarget.month === now.getMonth() && monthlyTarget.year === now.getFullYear()) {
                             updateTargetDisplay();
                         } else {
                             monthlyTarget = null;
@@ -5820,12 +5663,6 @@
 
         // Load targets when app initializes
         setTimeout(() => {
-            // Set today as default start date
-            const today = new Date().toISOString().split('T')[0];
-            const startDateInput = document.getElementById('targetStartDate');
-            if (startDateInput && !startDateInput.value) {
-                startDateInput.value = today;
-            }
             loadTargetFromFirebase();
         }, 2000);
     </script>
