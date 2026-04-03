@@ -2700,8 +2700,22 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="woltMode">Account Mode:</label>
+                        <select id="woltMode" required onchange="updateWoltFinalValue()">
+                            <option value="">Select mode...</option>
+                            <option value="my-account">My Account (Zero Commission)</option>
+                            <option value="rented-account">Rented Account (20% Commission)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="woltEarnings">Daily Earnings (€):</label>
-                        <input type="number" id="woltEarnings" step="0.01" placeholder="e.g., 35.50" required>
+                        <input type="number" id="woltEarnings" step="0.01" placeholder="e.g., 35.50" required oninput="updateWoltFinalValue()">
+                    </div>
+
+                    <div class="form-group" id="woltFinalValueContainer" style="display: none;">
+                        <label for="woltFinalValue">Final Value After Commission (€):</label>
+                        <input type="number" id="woltFinalValue" step="0.01" placeholder="Auto-calculated" readonly>
                     </div>
 
                     <div style="display: flex; gap: 10px;">
@@ -3088,8 +3102,20 @@
                                 <input type="date" id="modalWoltDate" name="modalWoltDate">
                             </div>
                             <div class="form-group">
+                                <label for="modalWoltMode">Account Mode:</label>
+                                <select id="modalWoltMode" name="modalWoltMode" onchange="updateModalWoltFinalValue()">
+                                    <option value="">Select mode...</option>
+                                    <option value="my-account">My Account (Zero Commission)</option>
+                                    <option value="rented-account">Rented Account (20% Commission)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="modalWoltEarnings">Daily Earnings (€):</label>
-                                <input type="number" id="modalWoltEarnings" name="modalWoltEarnings" step="0.01" placeholder="e.g., 35.50">
+                                <input type="number" id="modalWoltEarnings" name="modalWoltEarnings" step="0.01" placeholder="e.g., 35.50" oninput="updateModalWoltFinalValue()">
+                            </div>
+                            <div class="form-group" id="modalWoltFinalValueContainer" style="display: none;">
+                                <label for="modalWoltFinalValue">Final Value After Commission (€):</label>
+                                <input type="number" id="modalWoltFinalValue" name="modalWoltFinalValue" step="0.01" placeholder="Auto-calculated" readonly>
                             </div>
                         </div>
 
@@ -3644,10 +3670,34 @@
 
             // Populate modal form with existing data
             document.getElementById('modalWoltDate').value = entry.date;
+            document.getElementById('modalWoltMode').value = entry.mode || 'my-account';
             document.getElementById('modalWoltEarnings').value = entry.earnings.toFixed(2);
+            
+            // Update display of final value
+            updateModalWoltFinalValue();
 
             // Open modal for Wolt
             openEditModal('wolt', id);
+        }
+
+        function updateModalWoltFinalValue() {
+            const mode = document.getElementById('modalWoltMode').value;
+            const earnings = parseFloat(document.getElementById('modalWoltEarnings').value) || 0;
+            const finalValueContainer = document.getElementById('modalWoltFinalValueContainer');
+            const finalValueInput = document.getElementById('modalWoltFinalValue');
+
+            if (mode === 'rented-account' && earnings > 0) {
+                const commission = earnings * 0.20;
+                const finalValue = earnings - commission;
+                finalValueInput.value = finalValue.toFixed(2);
+                finalValueContainer.style.display = 'block';
+            } else if (mode === 'my-account' && earnings > 0) {
+                finalValueInput.value = earnings.toFixed(2);
+                finalValueContainer.style.display = 'none';
+            } else {
+                finalValueInput.value = '';
+                finalValueContainer.style.display = 'none';
+            }
         }
 
         function cancelWoltEdit() {
@@ -3834,10 +3884,15 @@
 
         function validateWoltModalFields() {
             const date = document.getElementById('modalWoltDate').value;
+            const mode = document.getElementById('modalWoltMode').value;
             const earnings = document.getElementById('modalWoltEarnings').value;
 
             if (!date) {
                 showErrorMessage('Please enter a date');
+                return false;
+            }
+            if (!mode) {
+                showErrorMessage('Please select an account mode');
                 return false;
             }
             if (earnings === '' || isNaN(earnings) || parseFloat(earnings) < 0) {
@@ -3955,6 +4010,15 @@
             const date = new Date(dateValue + 'T00:00:00');
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const dayName = days[date.getDay()];
+            const mode = document.getElementById('modalWoltMode').value;
+            const earnings = parseFloat(document.getElementById('modalWoltEarnings').value);
+            
+            // Calculate final value based on mode
+            let finalValue = earnings;
+            if (mode === 'rented-account') {
+                const commission = earnings * 0.20;
+                finalValue = earnings - commission;
+            }
 
             if (editingWoltId) {
                 const index = income.findIndex(item => item.id === editingWoltId);
@@ -3963,7 +4027,9 @@
                         ...income[index],
                         date: dateValue,
                         day: dayName,
-                        earnings: parseFloat(document.getElementById('modalWoltEarnings').value)
+                        earnings: earnings,
+                        mode: mode,
+                        finalValue: finalValue
                     };
                 }
                 showSuccessMessage('Wolt income updated successfully!');
@@ -4199,6 +4265,26 @@
             }
         }
 
+        function updateWoltFinalValue() {
+            const mode = document.getElementById('woltMode').value;
+            const earnings = parseFloat(document.getElementById('woltEarnings').value) || 0;
+            const finalValueContainer = document.getElementById('woltFinalValueContainer');
+            const finalValueInput = document.getElementById('woltFinalValue');
+
+            if (mode === 'rented-account' && earnings > 0) {
+                const commission = earnings * 0.20;
+                const finalValue = earnings - commission;
+                finalValueInput.value = finalValue.toFixed(2);
+                finalValueContainer.style.display = 'block';
+            } else if (mode === 'my-account' && earnings > 0) {
+                finalValueInput.value = earnings.toFixed(2);
+                finalValueContainer.style.display = 'none';
+            } else {
+                finalValueInput.value = '';
+                finalValueContainer.style.display = 'none';
+            }
+        }
+
         function handleWoltSubmit(e) {
             e.preventDefault();
 
@@ -4206,6 +4292,15 @@
             const date = new Date(dateValue + 'T00:00:00');
             const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const dayName = days[date.getDay()];
+            const mode = document.getElementById('woltMode').value;
+            const earnings = parseFloat(document.getElementById('woltEarnings').value);
+            
+            // Calculate final value based on mode
+            let finalValue = earnings;
+            if (mode === 'rented-account') {
+                const commission = earnings * 0.20;
+                finalValue = earnings - commission;
+            }
 
             if (editingWoltId) {
                 // Update existing entry
@@ -4215,7 +4310,9 @@
                         ...income[index],
                         date: dateValue,
                         day: dayName,
-                        earnings: parseFloat(document.getElementById('woltEarnings').value)
+                        earnings: earnings,
+                        mode: mode,
+                        finalValue: finalValue
                     };
                 }
                 showSuccessMessage('Wolt income updated successfully!');
@@ -4227,7 +4324,9 @@
                     type: 'wolt',
                     date: dateValue,
                     day: dayName,
-                    earnings: parseFloat(document.getElementById('woltEarnings').value)
+                    earnings: earnings,
+                    mode: mode,
+                    finalValue: finalValue
                 };
                 income.push(newIncome);
                 showSuccessMessage('Wolt income added successfully!');
@@ -4617,6 +4716,13 @@
                 let details = '';
                 if (item.type === 'posti') {
                     details = item.routeCode;
+                } else if (item.type === 'wolt') {
+                    const modeLabel = item.mode === 'rented-account' ? 'Rented (20%)' : 'My Account';
+                    if (item.mode === 'rented-account' && item.finalValue) {
+                        details = `${modeLabel} • Final: €${item.finalValue.toFixed(2)}`;
+                    } else {
+                        details = modeLabel || 'Wolt';
+                    }
                 } else if (item.type === 'other') {
                     details = item.source;
                 } else {
@@ -4706,6 +4812,13 @@
                     let details = '';
                     if (item.type === 'posti') {
                         details = item.routeCode;
+                    } else if (item.type === 'wolt') {
+                        const modeLabel = item.mode === 'rented-account' ? 'Rented (20%)' : 'My Account';
+                        if (item.mode === 'rented-account' && item.finalValue) {
+                            details = `${modeLabel} • Final: €${item.finalValue.toFixed(2)}`;
+                        } else {
+                            details = modeLabel || 'Wolt';
+                        }
                     } else if (item.type === 'woltsubstitute') {
                         details = `${item.workerName} • Total: €${item.totalEarnings.toFixed(2)} • Your: €${item.userCommission.toFixed(2)} • Worker: €${item.workerPayment.toFixed(2)}`;
                     } else if (item.type === 'other') {
@@ -4784,6 +4897,13 @@
                 let details = '';
                 if (item.type === 'posti') {
                     details = item.routeCode;
+                } else if (item.type === 'wolt') {
+                    const modeLabel = item.mode === 'rented-account' ? 'Rented (20%)' : 'My Account';
+                    if (item.mode === 'rented-account' && item.finalValue) {
+                        details = `${modeLabel} • Final: €${item.finalValue.toFixed(2)}`;
+                    } else {
+                        details = modeLabel || 'Wolt';
+                    }
                 } else if (item.type === 'other') {
                     details = item.source;
                 } else {
