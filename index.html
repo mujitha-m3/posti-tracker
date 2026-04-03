@@ -4556,7 +4556,10 @@
         }
 
         function updateDashboard(weekIncome) {
-            const totalEarnings = weekIncome.reduce((sum, item) => sum + item.earnings, 0);
+            const totalEarnings = weekIncome.reduce((sum, item) => {
+                const displayValue = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                return sum + displayValue;
+            }, 0);
             const postiIncome = weekIncome.filter(item => item.type === 'posti');
             const totalSources = postiIncome.length;  // Count only Posti routes done
             const totalHours = postiIncome.reduce((sum, item) => sum + item.duration, 0);
@@ -4583,7 +4586,9 @@
                 if (!breakdown[type]) {
                     breakdown[type] = { earnings: 0, hours: 0, count: 0 };
                 }
-                breakdown[type].earnings += item.earnings;
+                // Use finalValue for rented Wolt accounts, otherwise use earnings
+                const displayValue = (type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                breakdown[type].earnings += displayValue;
                 breakdown[type].count += 1;
                 if (item.duration) {
                     breakdown[type].hours += item.duration;
@@ -4631,7 +4636,10 @@
 
             days.forEach((day) => {
                 const dayIncome = weekIncome.filter(item => item.day === day);
-                const dayEarnings = dayIncome.reduce((sum, item) => sum + item.earnings, 0);
+                const dayEarnings = dayIncome.reduce((sum, item) => {
+                    const displayValue = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                    return sum + displayValue;
+                }, 0);
                 const dayHours = dayIncome.filter(item => item.type === 'posti').reduce((sum, item) => sum + item.duration, 0);
                 const entryCount = dayIncome.length;
 
@@ -4670,7 +4678,10 @@
                 const dayIncome = monthData.filter(item => item.date === dateStr);
                 
                 if (dayIncome.length > 0) {
-                    const dayEarnings = dayIncome.reduce((sum, item) => sum + item.earnings, 0);
+                    const dayEarnings = dayIncome.reduce((sum, item) => {
+                        const displayValue = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                        return sum + displayValue;
+                    }, 0);
                     const dayHours = dayIncome.filter(item => item.type === 'posti').reduce((sum, item) => sum + item.duration, 0);
                     const entryCount = dayIncome.length;
                     const dayName = dayIncome[0].day;
@@ -4842,11 +4853,12 @@
                         actionButtons = `<button class="btn-small" style="background: #27ae60;" onclick="editOtherIncome('${item.id}')">Edit</button><button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>`;
                     }
 
+                    const displayEarnings = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
                     entryItem.innerHTML = `
                         <div class="entry-row"><label>Source</label><strong>${getSourceEmoji(item.type)} ${formatSourceType(item.type)}</strong></div>
                         <div class="entry-row"><label>Details</label><span>${details}</span></div>
                         <div class="entry-row"><label>Duration</label><span>${duration}</span></div>
-                        <div class="entry-row earnings"><label>Earnings</label><strong>€${item.earnings.toFixed(2)}</strong></div>
+                        <div class="entry-row earnings"><label>Earnings</label><strong>€${displayEarnings.toFixed(2)}</strong></div>
                         <div class="entry-row actions">${actionButtons}</div>
                     `;
                     entriesContainer.appendChild(entryItem);
@@ -4924,13 +4936,14 @@
                 }
                 
                 const durationDisplay = item.duration ? `${item.duration.toFixed(2)} h` : '-';
+                const displayEarnings = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
                 row.innerHTML = `
                     <td>${dateFormatted}</td>
                     <td>${item.day}</td>
                     <td><strong>${getSourceEmoji(item.type)} ${formatSourceType(item.type)}</strong></td>
                     <td>${details}</td>
                     <td>${durationDisplay}</td>
-                    <td><strong>€${item.earnings.toFixed(2)}</strong></td>
+                    <td><strong>€${displayEarnings.toFixed(2)}</strong></td>
                     <td>${actionButtons}</td>
                 `;
                 tbody.appendChild(row);
@@ -5088,7 +5101,8 @@
                 
                 weekIncome.forEach(item => {
                     if (dayEarnings.hasOwnProperty(item.day)) {
-                        dayEarnings[item.day] += item.earnings;
+                        const displayValue = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                        dayEarnings[item.day] += displayValue;
                     }
                 });
                 
@@ -5209,7 +5223,8 @@
                 
                 weekIncome.forEach(item => {
                     if (sources.hasOwnProperty(item.type)) {
-                        sources[item.type] += item.earnings;
+                        const displayValue = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                        sources[item.type] += displayValue;
                     }
                 });
                 
@@ -5446,7 +5461,7 @@
                             <div class="source-label">${getSourceEmoji(item.type)} ${formatSourceType(item.type)}</div>
                         </div>
                         <div style="color: var(--text-light); font-size: 0.9em;">${details}</div>
-                        <div class="earnings">€${item.earnings.toFixed(2)}</div>
+                        <div class="earnings">€${((item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings).toFixed(2)}</div>
                     </div>
                 `;
             });
