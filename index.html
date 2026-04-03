@@ -5444,14 +5444,23 @@
                 const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
 
                 let details = '';
+                let editButton = '';
+                
                 if (item.type === 'posti') {
                     details = `Route: ${item.routeCode} | ${item.duration.toFixed(2)}h | ${item.km}km`;
+                    editButton = `<button class="btn-small" style="background: #27ae60; margin-right: 5px;" onclick="editPostiRoute('${item.id}')">Edit</button>`;
                 } else if (item.type === 'wolt') {
-                    details = 'Wolt Delivery';
+                    details = `${item.mode === 'rented-account' ? 'Rented (20%)' : 'My Account'}`;
+                    editButton = `<button class="btn-small" style="background: #27ae60; margin-right: 5px;" onclick="editWoltIncome('${item.id}')">Edit</button>`;
+                } else if (item.type === 'woltsubstitute') {
+                    details = `Worker: ${item.workerName} | Total: €${item.totalEarnings.toFixed(2)}`;
+                    editButton = `<button class="btn-small" style="background: #27ae60; margin-right: 5px;" onclick="editWoltSubstituteIncome('${item.id}')">Edit</button>`;
                 } else if (item.type === 'staffpoint') {
                     details = 'StaffPoint Work';
+                    editButton = `<button class="btn-small" style="background: #27ae60; margin-right: 5px;" onclick="editStaffPointIncome('${item.id}')">Edit</button>`;
                 } else {
                     details = item.source || 'Other Income';
+                    editButton = `<button class="btn-small" style="background: #27ae60; margin-right: 5px;" onclick="editOtherIncome('${item.id}')">Edit</button>`;
                 }
 
                 html += `
@@ -5462,6 +5471,10 @@
                         </div>
                         <div style="color: var(--text-light); font-size: 0.9em;">${details}</div>
                         <div class="earnings">€${((item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings).toFixed(2)}</div>
+                        <div style="margin-top: 8px;">
+                            ${editButton}
+                            <button class="btn-danger" onclick="deleteIncome('${item.id}')">Delete</button>
+                        </div>
                     </div>
                 `;
             });
