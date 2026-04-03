@@ -2846,6 +2846,30 @@
                     <button type="submit" class="btn-primary">Add Income</button>
                 </form>
 
+                <!-- Monthly Statistics Section -->
+                <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid var(--border-color);">
+                    <h3 style="margin-bottom: 20px; font-size: 1.3rem;">📊 Monthly Statistics</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 30px;">
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <div style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">Current Month Earnings</div>
+                            <p id="monthlyEarningsLog" style="font-size: 1.5em; font-weight: 700; color: var(--success-color); margin: 0;">€0.00</p>
+                        </div>
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <div style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">Current Month Hours</div>
+                            <p id="monthlyHoursLog" style="font-size: 1.5em; font-weight: 700; color: var(--primary-color); margin: 0;">0 h</p>
+                        </div>
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <div style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">Average Hourly Rate</div>
+                            <p id="avgHourlyRateLog" style="font-size: 1.5em; font-weight: 700; color: var(--accent-color); margin: 0;">€0.00</p>
+                        </div>
+                        <div style="background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; text-align: center; box-shadow: var(--shadow-sm);">
+                            <div style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 8px;">Days Worked</div>
+                            <p id="daysWorkedLog" style="font-size: 1.5em; font-weight: 700; color: #f39c12; margin: 0;">0</p>
+                        </div>
+                    </div>
+                    <div id="sourceStatsLog" class="source-stats-grid" style="display: none; margin-bottom: 30px;"></div>
+                </div>
+
                 <!-- Today's Entries Section -->
                 <div style="margin-top: 50px; padding-top: 30px; border-top: 2px solid var(--border-color);">
                     <h3 style="margin-bottom: 20px; font-size: 1.3rem;">📋 All Entries</h3>
@@ -4564,9 +4588,41 @@
             });
         }
 
+        function updateLogPageStats(allIncome) {
+            const currentDate = new Date();
+            const currentMonth = currentDate.getMonth();
+            const currentYear = currentDate.getFullYear();
+
+            const monthlyIncome = allIncome.filter(item => {
+                const itemDate = new Date(item.date + 'T00:00:00');
+                return itemDate.getMonth() === currentMonth && itemDate.getFullYear() === currentYear;
+            });
+
+            const monthlyEarnings = monthlyIncome.reduce((sum, item) => {
+                const displayValue = (item.type === 'wolt' && item.mode === 'rented-account' && item.finalValue) ? item.finalValue : item.earnings;
+                return sum + displayValue;
+            }, 0);
+            const monthlyHours = monthlyIncome.reduce((sum, item) => sum + (item.duration || 0), 0);
+            const workedDays = new Set(monthlyIncome.map(item => item.date)).size;
+            const avgHourlyRate = monthlyHours > 0 ? monthlyEarnings / monthlyHours : 0;
+
+            const earningsEl = document.getElementById('monthlyEarningsLog');
+            const hoursEl = document.getElementById('monthlyHoursLog');
+            const rateEl = document.getElementById('avgHourlyRateLog');
+            const daysEl = document.getElementById('daysWorkedLog');
+
+            if (earningsEl) earningsEl.textContent = '€' + monthlyEarnings.toFixed(2);
+            if (hoursEl) hoursEl.textContent = monthlyHours.toFixed(2) + ' h';
+            if (rateEl) rateEl.textContent = '€' + avgHourlyRate.toFixed(2);
+            if (daysEl) daysEl.textContent = workedDays;
+        }
+
         function displayAllEntriesLog(allIncome) {
             const container = document.getElementById('todayEntriesContainer');
             if (!container) return;
+
+            // Update monthly statistics on Log Income page
+            updateLogPageStats(allIncome);
 
             if (allIncome.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px; grid-column: 1/-1;">No entries logged yet</p>';
