@@ -5763,9 +5763,12 @@
         }
 
         function calculateWeeklyTarget(monthlyTargetAmount) {
+            const weeklyAmount = (monthlyTargetAmount / 4).toFixed(2);
             return {
-                week1: (monthlyTargetAmount / 2).toFixed(2),
-                week2: (monthlyTargetAmount / 2).toFixed(2),
+                week1: weeklyAmount,
+                week2: weeklyAmount,
+                week3: weeklyAmount,
+                week4: weeklyAmount,
                 total: monthlyTargetAmount.toFixed(2)
             };
         }
@@ -5817,32 +5820,25 @@
             const progressPercentage = Math.min((currentIncome / monthlyAmount) * 100, 100);
             const remaining = Math.max(monthlyAmount - currentIncome, 0);
 
-            const week1Start = new Date();
-            week1Start.setDate(1);
-            const week1End = new Date();
-            week1End.setDate(15);
-            
-            const week2Start = new Date();
-            week2Start.setDate(16);
-            const lastDay = new Date(week2Start.getFullYear(), week2Start.getMonth() + 1, 0);
-            const week2End = lastDay;
+            // Calculate income for each of 4 weeks
+            const calculateWeekIncome = (startDay, endDay) => {
+                return income.filter(item => {
+                    const itemDate = new Date(item.date + 'T00:00:00');
+                    return itemDate.getMonth() === new Date().getMonth() && 
+                           itemDate.getFullYear() === new Date().getFullYear() &&
+                           itemDate.getDate() >= startDay && itemDate.getDate() <= endDay;
+                }).reduce((sum, item) => sum + item.earnings, 0);
+            };
 
-            const week1Income = income.filter(item => {
-                const itemDate = new Date(item.date + 'T00:00:00');
-                return itemDate.getMonth() === week1Start.getMonth() && 
-                       itemDate.getFullYear() === week1Start.getFullYear() &&
-                       itemDate.getDate() >= 1 && itemDate.getDate() <= 15;
-            }).reduce((sum, item) => sum + item.earnings, 0);
-
-            const week2Income = income.filter(item => {
-                const itemDate = new Date(item.date + 'T00:00:00');
-                return itemDate.getMonth() === week2Start.getMonth() && 
-                       itemDate.getFullYear() === week2Start.getFullYear() &&
-                       itemDate.getDate() >= 16;
-            }).reduce((sum, item) => sum + item.earnings, 0);
+            const week1Income = calculateWeekIncome(1, 7);
+            const week2Income = calculateWeekIncome(8, 14);
+            const week3Income = calculateWeekIncome(15, 21);
+            const week4Income = calculateWeekIncome(22, 31);
 
             const week1Progress = Math.min((week1Income / weeklyTargets.week1) * 100, 100);
             const week2Progress = Math.min((week2Income / weeklyTargets.week2) * 100, 100);
+            const week3Progress = Math.min((week3Income / weeklyTargets.week3) * 100, 100);
+            const week4Progress = Math.min((week4Income / weeklyTargets.week4) * 100, 100);
 
             displayArea.innerHTML = `
                 <div class="target-display-grid">
@@ -5867,7 +5863,7 @@
 
                     <!-- Week 1 Card -->
                     <div class="target-card">
-                        <h4>Week 1-15 (1st Half)</h4>
+                        <h4>Week 1 (1-7)</h4>
                         <div class="target-value">€${weeklyTargets.week1}</div>
                         <div class="target-progress">
                             <div class="progress-label">
@@ -5886,7 +5882,7 @@
 
                     <!-- Week 2 Card -->
                     <div class="target-card">
-                        <h4>Week 16-31 (2nd Half)</h4>
+                        <h4>Week 2 (8-14)</h4>
                         <div class="target-value">€${weeklyTargets.week2}</div>
                         <div class="target-progress">
                             <div class="progress-label">
@@ -5898,6 +5894,44 @@
                             </div>
                             <div class="progress-label">
                                 <span>${week2Progress.toFixed(0)}%</span>
+                                <span>Earned</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Week 3 Card -->
+                    <div class="target-card">
+                        <h4>Week 3 (15-21)</h4>
+                        <div class="target-value">€${weeklyTargets.week3}</div>
+                        <div class="target-progress">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span>${week3Income.toFixed(2)} / €${weeklyTargets.week3}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${week3Progress}%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>${week3Progress.toFixed(0)}%</span>
+                                <span>Earned</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Week 4 Card -->
+                    <div class="target-card">
+                        <h4>Week 4 (22-31)</h4>
+                        <div class="target-value">€${weeklyTargets.week4}</div>
+                        <div class="target-progress">
+                            <div class="progress-label">
+                                <span>Progress</span>
+                                <span>${week4Income.toFixed(2)} / €${weeklyTargets.week4}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${week4Progress}%"></div>
+                            </div>
+                            <div class="progress-label">
+                                <span>${week4Progress.toFixed(0)}%</span>
                                 <span>Earned</span>
                             </div>
                         </div>
