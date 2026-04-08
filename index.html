@@ -5770,8 +5770,24 @@
             };
         }
 
-        function calculateDailyTarget(monthlyTargetAmount) {
-            return (monthlyTargetAmount / 30).toFixed(2);
+        function calculateDailyTarget(monthlyTargetAmount, currentIncome = 0) {
+            const now = new Date();
+            const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const currentDay = now.getDate();
+            
+            // Calculate remaining budget and days
+            const remainingBudget = Math.max(monthlyTargetAmount - currentIncome, 0);
+            const remainingDays = daysInMonth - currentDay + 1; // +1 to include today
+            
+            // Dynamic daily target = Remaining Budget / Remaining Days
+            const dynamicDailyTarget = (remainingBudget / remainingDays).toFixed(2);
+            
+            return {
+                amount: parseFloat(dynamicDailyTarget),
+                remainingBudget: remainingBudget.toFixed(2),
+                remainingDays: remainingDays,
+                staticAverage: (monthlyTargetAmount / 30).toFixed(2)
+            };
         }
 
         function getCurrentMonthIncome() {
@@ -5795,7 +5811,7 @@
 
             const monthlyAmount = monthlyTarget.amount;
             const weeklyTargets = calculateWeeklyTarget(monthlyAmount);
-            const dailyTarget = calculateDailyTarget(monthlyAmount);
+            const dailyTargets = calculateDailyTarget(monthlyAmount, getCurrentMonthIncome());
             const currentIncome = getCurrentMonthIncome();
             
             const progressPercentage = Math.min((currentIncome / monthlyAmount) * 100, 100);
@@ -5889,12 +5905,14 @@
 
                     <!-- Daily Target Card -->
                     <div class="target-card">
-                        <h4>Daily Target (Average)</h4>
-                        <div class="target-value">€${dailyTarget}</div>
+                        <h4>Daily Target (Adjusted)</h4>
+                        <div class="target-value">€${dailyTargets.amount}</div>
                         <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: var(--spacing-md);">
-                            <div>€${monthlyAmount.toFixed(2)} ÷ 30 days</div>
+                            <div>€${dailyTargets.remainingBudget} ÷ ${dailyTargets.remainingDays} days</div>
                             <div style="font-size: 0.8rem; margin-top: var(--spacing-sm); opacity: 0.8;">
-                                To stay on track
+                                <span style="color: ${parseFloat(dailyTargets.amount) > parseFloat(dailyTargets.staticAverage) ? '#ef4444' : '#10b981'};">
+                                    ${parseFloat(dailyTargets.amount) > parseFloat(dailyTargets.staticAverage) ? '↑ Higher' : '↓ Lower'} than average (€${dailyTargets.staticAverage})
+                                </span>
                             </div>
                         </div>
                     </div>
