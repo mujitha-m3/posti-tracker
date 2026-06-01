@@ -43,12 +43,35 @@ Complete step-by-step guide to set up Firebase for your income tracker app.
 3. Click **Next**
 
 ### 2.3 Security Rules
-1. Select **Start in test mode**
-2. ⚠️ Warning message appears (normal) - Click **Enable**
+1. Select **Start in test mode** to create the database
+2. Immediately replace the rules with authenticated access after creation:
+
+```json
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "income_data": {
+      ".read": "auth != null",
+      ".write": "auth != null"
+    }
+  }
+}
+```
+
+3. Click **Publish**
 
 ### 2.4 Database Created
 - You should see a URL like: `https://posti-tracker-xxxxx.firebaseio.com`
 - ✅ Database is ready!
+
+### 2.5 Enable Anonymous Authentication
+1. In Firebase Console, open **Authentication**
+2. Go to **Sign-in method**
+3. Enable **Anonymous**
+4. Save the change
+
+The app signs in anonymously in the browser, so users keep the cloud sync without seeing a login screen.
 
 ---
 
@@ -83,6 +106,8 @@ const firebaseConfig = {
 ---
 
 ## Step 4: Update Your App Code
+
+The app already includes anonymous Firebase Authentication and a local cache merge, so the code changes are limited to keeping the Firebase config values correct.
 
 ### 4.1 Open index.html
 - Right-click `index.html` → Edit with VS Code

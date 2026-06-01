@@ -14,6 +14,7 @@
     
     <!-- Firebase SDK (Full URL with cache busting) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js?v=1"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js?v=1"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js?v=1"></script>
 
     <!-- Chart.js for visualizations -->
@@ -3400,11 +3401,14 @@
         const POSTI_HOURLY_RATE = 11;
         const POSTI_KM_RATE = 0.55;
         const DATABASE_PATH = 'income_data';
+        const LOCAL_STORAGE_KEY = 'postiIncome';
 
         let currentWeekStart = getWeekStart(new Date());
-        let income = [];
+        let income = loadIncomeFromLocalStorage();
         let database = null;
+        let auth = null;
         let syncTimeout = null;
+        let firebaseSyncEnabled = true;
         let editingPostiId = null;
         let editingWoltId = null;
         let editingWoltSubstituteId = null;
@@ -3441,19 +3445,22 @@
                         if (firebase.apps && firebase.apps.length > 0) {
                             firebaseAvailable = true;
                             database = firebase.database();
+                            auth = firebase.auth();
                             console.log('✅ Firebase already initialized');
-                            updateFirebaseStatus('connected');
                         } else {
                             firebase.initializeApp(firebaseConfig);
                             firebaseAvailable = true;
                             database = firebase.database();
+                            auth = firebase.auth();
                             console.log('✅ Firebase initialized successfully');
-                            updateFirebaseStatus('connected');
                         }
+
+                        await initializeFirebaseSync();
                     } catch (error) {
                         console.error('❌ Error initializing Firebase:', error);
                         firebaseAvailable = false;
                         database = null;
+                        auth = null;
                         updateFirebaseStatus('offline');
                     }
                 }
@@ -3464,14 +3471,9 @@
             
             console.log('🔍 Firebase Available:', firebaseAvailable);
             console.log('🔍 Database:', database ? 'connected' : 'null');
-            
-            // Load data from Firebase on startup
-            if (firebaseAvailable && database) {
-                console.log('📥 Loading data from Firebase...');
-                loadIncomeFromFirebase();
-            } else {
-                console.warn('⚠️ Skipping Firebase load - database not ready');
-            }
+
+            displayCurrentWeek();
+            updateMonthlyStats();
             
             populateDurationDropdowns();
             setDatesToToday();
@@ -3480,8 +3482,33 @@
             updateMonthlyStats();
         });
 
+        async function initializeFirebaseSync() {
+            if (!auth || !database) {
+                firebaseSyncEnabled = false;
+                updateFirebaseStatus('offline');
+                return;
+            }
+
+            try {
+                updateFirebaseStatus('syncing');
+                auth.onAuthStateChanged((user) => {
+                    console.log('🔐 Firebase auth state:', user ? { uid: user.uid, anonymous: user.isAnonymous } : null);
+                });
+                await auth.signInAnonymously();
+                console.log('🔐 Firebase current user after sign-in:', auth.currentUser ? { uid: auth.currentUser.uid, anonymous: auth.currentUser.isAnonymous } : null);
+                console.log('✅ Firebase anonymous sign-in completed');
+                firebaseSyncEnabled = true;
+                loadIncomeFromFirebase();
+            } catch (error) {
+                console.error('❌ Firebase anonymous sign-in failed:', error);
+                firebaseSyncEnabled = false;
+                updateFirebaseStatus('offline');
+            }
+        }
+
         function updateFirebaseStatus(status) {
             const statusEl = document.getElementById('firebaseStatus');
+            if (!statusEl) return;
             // Remove all status classes first
             statusEl.classList.remove('connected', 'offline', 'syncing');
             
@@ -3508,24 +3535,64 @@
             updateFirebaseStatus('syncing');
             
             database.ref(DATABASE_PATH).on('value', (snapshot) => {
-                const data = snapshot.val();
-                income = (Array.isArray(data) ? data : []) || [];
+                const cloudIncome = normalizeIncomeList(snapshot.val());
+                const localIncome = loadIncomeFromLocalStorage();
+                const mergedIncome = mergeIncomeLists(cloudIncome, localIncome);
+                const cloudSnapshot = JSON.stringify(cloudIncome);
+                const mergedSnapshot = JSON.stringify(mergedIncome);
+
+                income = mergedIncome;
+                saveIncomeToLocalStorage();
                 console.log(`✅ Firebase listener fired - Loaded ${income.length} entries`);
                 displayCurrentWeek();
                 updateMonthlyStats();
-                updateFirebaseStatus('connected');
+
+                if (firebaseSyncEnabled && mergedSnapshot !== cloudSnapshot) {
+                    updateFirebaseStatus('syncing');
+                    database.ref(DATABASE_PATH).set(income)
+                        .then(() => {
+                            updateFirebaseStatus('connected');
+                            console.log('✅ Local and cloud income synced');
+                        })
+                        .catch((error) => {
+                            console.error('❌ Firebase merge sync error:', error.code, error.message);
+                            if (isPermissionDeniedError(error)) {
+                                firebaseSyncEnabled = false;
+                                console.warn('⚠️ Firebase access denied while merging. Using local storage only.');
+                                saveIncomeToLocalStorage();
+                            }
+                            updateFirebaseStatus('offline');
+                        });
+                } else {
+                    updateFirebaseStatus('connected');
+                }
             }, (error) => {
                 console.error('❌ Firebase listener error:', error);
                 console.error('Error code:', error.code);
                 console.error('Error message:', error.message);
+                if (isPermissionDeniedError(error)) {
+                    firebaseSyncEnabled = false;
+                    console.warn('⚠️ Firebase access denied. Using local storage only.');
+                    saveIncomeToLocalStorage();
+                    displayCurrentWeek();
+                    updateMonthlyStats();
+                }
                 updateFirebaseStatus('offline');
             });
         }
 
         function saveIncomeToFirebase() {
+            saveIncomeToLocalStorage();
+
+            if (!firebaseSyncEnabled) {
+                console.warn('⚠️ Firebase sync disabled - saved to local storage only');
+                updateFirebaseStatus('offline');
+                return;
+            }
+
             if (!database) {
                 console.error('❌ Firebase database is null - cannot save');
-                showErrorMessage('❌ Firebase not connected. Check connection & try again.');
+                updateFirebaseStatus('offline');
                 return;
             }
 
@@ -3541,10 +3608,66 @@
                     })
                     .catch((error) => {
                         console.error('❌ Firebase save error:', error.code, error.message);
+                        if (isPermissionDeniedError(error)) {
+                            firebaseSyncEnabled = false;
+                            console.warn('⚠️ Firebase access denied while saving. Using local storage only.');
+                            saveIncomeToLocalStorage();
+                        }
                         updateFirebaseStatus('offline');
-                        showErrorMessage('❌ Failed to save: ' + error.message);
                     });
             }, 500);
+        }
+
+        function loadIncomeFromLocalStorage() {
+            try {
+                const storedIncome = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (!storedIncome) {
+                    return [];
+                }
+
+                const parsedIncome = JSON.parse(storedIncome);
+                return Array.isArray(parsedIncome) ? parsedIncome : [];
+            } catch (error) {
+                console.error('❌ Failed to load income from localStorage:', error);
+                return [];
+            }
+        }
+
+        function saveIncomeToLocalStorage() {
+            try {
+                localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(income));
+            } catch (error) {
+                console.error('❌ Failed to save income to localStorage:', error);
+            }
+        }
+
+        function normalizeIncomeList(items) {
+            return Array.isArray(items) ? items.filter(item => item && typeof item === 'object') : [];
+        }
+
+        function mergeIncomeLists(cloudIncome, localIncome) {
+            const mergedById = new Map();
+            const mergedWithoutId = [];
+
+            [...cloudIncome, ...localIncome].forEach(item => {
+                if (!item) return;
+
+                if (item.id) {
+                    mergedById.set(item.id, item);
+                } else {
+                    const itemSignature = JSON.stringify(item);
+                    if (!mergedWithoutId.some(existingItem => JSON.stringify(existingItem) === itemSignature)) {
+                        mergedWithoutId.push(item);
+                    }
+                }
+            });
+
+            return [...Array.from(mergedById.values()), ...mergedWithoutId];
+        }
+
+        function isPermissionDeniedError(error) {
+            const code = String(error && error.code ? error.code : '').toLowerCase();
+            return code.includes('permission_denied') || code.includes('permission denied');
         }
 
 
